@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+    database:
+      container_name: postgres
+      image: postgres:latest
+      env_file:
+        - .env.development
+      environment:
+        POSTGRES_PASSWORD: ${DB_PASSWORD:-CMC@2022}
+        POSTGRES_DB: ${DB_NAME:-cside}
+        POSTGRES_USER: postgres
+      ports:
+        - 5432:5432
+      expose:
+        - 5432
+      networks:
+        - cside-network
+    dev:
+      container_name: api
+      build:
+        context: .
+        target: development
+        dockerfile: ./Dockerfile
+      ports:
+        - 3000:3000
+      networks:
+        - cside-network
+      volumes:
+        - ./src:/usr/app/src
+      env_file:
+        - .env.development
+      restart: unless-stopped
+      depends_on:
+        - database
+
+networks:
+    cside-network:
+        driver: bridge

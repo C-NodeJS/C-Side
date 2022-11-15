@@ -22,11 +22,11 @@ import { UserModule } from "./user/user.module";
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get('POSTGRES_HOST'),
-        port: configService.get('POSTGRES_PORT'),
-        user_name: configService.get('POSTGRES_USER'),
-        password: configService.get('POSTGRES_PASSWORD'),
-        database: configService.get('POSTGRES_DATABASE'),
+        host: configService.get('DB_HOST'),
+        port: configService.get('DB_PORT'),
+        user_name: configService.get('DB_USER_NAME'),
+        password: configService.get('DB_PASSWORD'),
+        database: configService.get('DB_NAME'),
         entities: [`${__dirname}/../**/*.entities.js`],
         synchronize: true
       })
