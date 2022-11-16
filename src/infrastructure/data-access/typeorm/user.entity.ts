@@ -10,11 +10,16 @@ export class UserModel {
   })
   name: string;
 
-  @Column()
-  address: string;
+  @Column({
+    nullable: true
+    }
+  )
+  address?: string;
 
-  @Column()
-  phone: string;
+  @Column({
+    nullable: true
+  })
+  phone?: string;
 
   @Column({
     nullable: false
@@ -28,14 +33,16 @@ export class UserModel {
 
   @Column({
     name: 'is_active',
-    type: 'tinyint',
+    type: 'smallint',
     width: 1,
-    nullable: false
+    nullable: true
   })
-  isActive: boolean;
+  isActive?: number;
 
-  @Column()
-  avatar: string;
+  @Column({
+    nullable: true
+  })
+  avatar?: string;
 
   // TODO add role_id field later...
 }

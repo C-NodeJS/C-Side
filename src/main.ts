@@ -7,10 +7,9 @@ declare const module: any;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  ConfigModule.forRoot({isGlobal: true})
-  await app.init()
+  // ConfigModule.forRoot({isGlobal: true})
+  // await app.init()
   const configService = app.get(ConfigService);
-  console.log(configService);
   const SERVER_PORT = parseInt(configService.get("SERVER_PORT")) || 3000;
 
   /**  Hot-reload. Relevant:

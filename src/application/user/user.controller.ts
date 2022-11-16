@@ -1,9 +1,8 @@
 import { ApiOkResponse, ApiTags } from "@nestjs/swagger";
-import { Body, Controller, Get, HttpException, Post, Req, Res } from "@nestjs/common";
-import { InjectMapper, MapPipe } from "@automapper/nestjs";
-import { Response } from 'express';
+import { Body, Controller, Post, Req, Res } from "@nestjs/common";
+import { MapPipe } from "@automapper/nestjs";
+import { Response } from "express";
 import { UserServiceImpl } from "./user.service";
-import { Mapper } from "@automapper/core";
 import { CreateUserRequestDTO } from "./dto/create-user.dto";
 import { UserModel } from "../../infrastructure/data-access/typeorm/user.entity";
 import { HttpPresenter } from "../http-presenters";
@@ -11,10 +10,7 @@ import { HttpPresenter } from "../http-presenters";
 @ApiTags("User")
 @Controller("/user")
 export class UserController {
-  constructor(
-    @InjectMapper() private readonly mapper: Mapper,
-    private userService: UserServiceImpl
-  ) {
+  constructor(private userService: UserServiceImpl) {
   }
 
   @Post("create")
@@ -30,6 +26,6 @@ export class UserController {
     // return presenter
     //   .reject(new ForbiddenException('You dont have access to create user!'))
     //   .render();
-    return httpPresenter.accept(await this.userService.createUser(user)).render()
+    return httpPresenter.accept(await this.userService.createUser(user)).render();
   }
 }
