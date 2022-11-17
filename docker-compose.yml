@@ -27,7 +27,8 @@ services:
       networks:
         - cside-network
       volumes:
-        - ./src:/usr/app/src
+        - .:/usr/app
+        - /usr/app/node_modules
       env_file:
         - .env.development
       restart: unless-stopped

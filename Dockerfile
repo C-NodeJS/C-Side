@@ -6,4 +6,4 @@ WORKDIR /usr/app
 COPY . /usr/app
 RUN yarn install --frozen-lockfile
 RUN yarn build
-CMD ["yarn", "start"]
+CMD ["yarn", "start:dev"]

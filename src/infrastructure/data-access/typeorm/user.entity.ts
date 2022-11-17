@@ -1,33 +1,41 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { RoleModel } from './role.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { RoomModel } from './room.entity';
 
-@Entity({name: 'users'})
+@Entity({ name: 'users' })
 export class UserModel {
   @PrimaryGeneratedColumn()
   user_id: number;
 
   @Column({
-    nullable: false
+    nullable: false,
   })
   name: string;
 
   @Column({
-    nullable: true
-    }
-  )
+    nullable: true,
+  })
   address?: string;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   phone?: string;
 
   @Column({
-    nullable: false
+    nullable: false,
   })
   email: string;
 
   @Column({
-    nullable: false
+    nullable: false,
   })
   password: string;
 
@@ -35,14 +43,19 @@ export class UserModel {
     name: 'is_active',
     type: 'smallint',
     width: 1,
-    nullable: true
+    nullable: true,
   })
   isActive?: number;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   avatar?: string;
 
-  // TODO add role_id field later...
+  @OneToMany(() => RoomModel, (room) => room.user)
+  rooms?: RoomModel[];
+
+  @ManyToOne(() => RoleModel, (role) => role.users)
+  @JoinColumn({ name: 'role_id' })
+  role_id: RoleModel;
 }
