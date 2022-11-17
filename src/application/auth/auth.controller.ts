@@ -11,7 +11,7 @@ export class AuthController {
   @ApiResponse({ status: 201, description: 'Successful Registration' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async login(@Body() payload: RegisterPayload): Promise<any> {
+  async register(@Body() payload: RegisterPayload): Promise<any> {
     return await this.authService.register(payload);
   }
 }
