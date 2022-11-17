@@ -1,33 +1,32 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({name: 'users'})
+@Entity({ name: 'users' })
 export class UserModel {
   @PrimaryGeneratedColumn()
   user_id: number;
 
   @Column({
-    nullable: false
+    nullable: true,
   })
-  name: string;
+  name?: string;
 
   @Column({
-    nullable: true
-    }
-  )
+    nullable: true,
+  })
   address?: string;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   phone?: string;
 
   @Column({
-    nullable: false
+    nullable: false,
   })
   email: string;
 
   @Column({
-    nullable: false
+    nullable: false,
   })
   password: string;
 
@@ -35,12 +34,12 @@ export class UserModel {
     name: 'is_active',
     type: 'smallint',
     width: 1,
-    nullable: true
+    nullable: true,
   })
   isActive?: number;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   avatar?: string;
 
