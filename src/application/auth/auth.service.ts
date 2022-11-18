@@ -13,7 +13,6 @@ export class AuthService {
   ) {}
 
   createToken(user: UserModel, accessTokenKey: string) {
-    console.log(accessTokenKey);
     const curentTime = Math.floor(Date.now() / 1000);
     let accessToken = '';
     try {
@@ -52,6 +51,9 @@ export class AuthService {
     const createUserData = {
       email: payload.email,
       password: payload.password,
+      name: payload.name,
+      phone: payload.phone,
+      address: payload.address,
     } as any as UserModel;
     const user = await this.userService.createUser(createUserData);
     const accessTokenKey = randomBytes(64).toString('hex');

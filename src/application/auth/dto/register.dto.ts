@@ -15,4 +15,19 @@ export class RegisterPayload {
   })
   @IsNotEmpty()
   password: string;
+
+  @ApiProperty({
+    required: false,
+  })
+  name: string;
+
+  @ApiProperty({
+    required: false,
+  })
+  phone: string;
+
+  @ApiProperty({
+    required: false,
+  })
+  address: string;
 }
