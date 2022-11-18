@@ -8,9 +8,8 @@ import { RegisterPayload } from './dto/register.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
   @Post('register')
-  @ApiResponse({ status: 201, description: 'Successful Registration' })
-  @ApiResponse({ status: 400, description: 'Bad Request' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 1000, description: 'Success!' })
+  @ApiResponse({ status: 9001, description: 'Failed' })
   async register(@Body() payload: RegisterPayload): Promise<any> {
     return await this.authService.register(payload);
   }

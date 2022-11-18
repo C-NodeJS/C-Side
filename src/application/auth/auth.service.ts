@@ -1,11 +1,40 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { RegisterPayload } from './dto/register.dto';
 import { UserServiceImpl } from './../user/user.service';
 import { UserModel } from './../../infrastructure/data-access/typeorm/user.entity';
+import { JwtService } from '@nestjs/jwt';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserServiceImpl) {}
+  constructor(
+    private readonly userService: UserServiceImpl,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  createToken(user: UserModel, accessTokenKey: string) {
+    console.log(accessTokenKey);
+    const curentTime = Math.floor(Date.now() / 1000);
+    let accessToken = '';
+    try {
+      accessToken = this.jwtService.sign({
+        aud: '',
+        sub: user.email.toString(),
+        iss: '',
+        iat: curentTime,
+        prm: accessTokenKey,
+      });
+    } catch (err) {
+      throw new Error(err);
+    }
+    return {
+      status_code: 1000,
+      message: 'Success!',
+      response: {
+        access_token: accessToken,
+      },
+    };
+  }
 
   async register(payload: RegisterPayload) {
     if (payload.email) {
@@ -13,12 +42,11 @@ export class AuthService {
         payload.email,
       );
       if (checkEmailUser) {
-        throw new HttpException(
-          {
-            messageCode: 'The email existed!',
-          },
-          HttpStatus.BAD_REQUEST,
-        );
+        return {
+          status_code: 9001,
+          message: 'Failed',
+          error: 'Internal Server Error',
+        };
       }
     }
     const createUserData = {
@@ -26,6 +54,8 @@ export class AuthService {
       password: payload.password,
     } as any as UserModel;
     const user = await this.userService.createUser(createUserData);
-    return user;
+    const accessTokenKey = randomBytes(64).toString('hex');
+    const accessToken = this.createToken(user, accessTokenKey);
+    return accessToken;
   }
 }

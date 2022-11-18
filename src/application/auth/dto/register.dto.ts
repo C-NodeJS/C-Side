@@ -14,12 +14,5 @@ export class RegisterPayload {
     required: true,
   })
   @IsNotEmpty()
-  @MinLength(5)
   password: string;
-
-  @ApiProperty({
-    required: true,
-  })
-  @Match('password')
-  passwordConfirmation: string;
 }
