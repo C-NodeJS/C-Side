@@ -15,6 +15,11 @@ export class UserModel {
   user_id: number;
 
   @Column({
+    name: 'username',
+  })
+  userName: string;
+
+  @Column({
     nullable: false,
   })
   name: string;

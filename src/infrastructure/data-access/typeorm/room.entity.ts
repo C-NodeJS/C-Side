@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Geometry, Point } from 'geojson';
+// import { Geometry, Point } from 'geojson';
 import { RoomStatus } from './enum';
 import { UserModel } from './user.entity';
 
