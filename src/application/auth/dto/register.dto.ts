@@ -1,8 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
-import { Match } from '../../common/match.validator';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 
-export class RegisterPayload {
+export class RegisterRequestDTO {
   @ApiProperty({
     required: true,
   })

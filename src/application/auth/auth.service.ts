@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RegisterPayload } from './dto/register.dto';
+import { RegisterRequestDTO } from './dto/register.dto';
 import { UserServiceImpl } from './../user/user.service';
 import { UserModel } from './../../infrastructure/data-access/typeorm/user.entity';
 import { JwtService } from '@nestjs/jwt';
@@ -35,7 +35,7 @@ export class AuthService {
     };
   }
 
-  async register(payload: RegisterPayload) {
+  async register(payload: RegisterRequestDTO) {
     if (payload.email) {
       const checkEmailUser = await this.userService.getByUserEmail(
         payload.email,
