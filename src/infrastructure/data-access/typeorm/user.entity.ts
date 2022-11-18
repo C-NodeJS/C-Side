@@ -1,5 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { PasswordTransformer } from './../../../application/common/password.transformer';
+import { RoleModel } from './role.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { RoomModel } from './room.entity';
 
 @Entity({ name: 'users' })
 export class UserModel {
@@ -7,7 +16,7 @@ export class UserModel {
   user_id: number;
 
   @Column({
-    nullable: true,
+    nullable: false,
   })
   name?: string;
 
@@ -45,5 +54,10 @@ export class UserModel {
   })
   avatar?: string;
 
-  // TODO add role_id field later...
+  @OneToMany(() => RoomModel, (room) => room.user)
+  rooms?: RoomModel[];
+
+  @ManyToOne(() => RoleModel, (role) => role.users)
+  @JoinColumn({ name: 'role_id' })
+  role_id: RoleModel;
 }

@@ -5,6 +5,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm/dist/typeorm.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { RoomModule } from './room/room.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { AuthModule } from './auth/auth.module';
     }),
     UserModule, //TODO add more module to DI...
     AuthModule,
+    UserModule,
+    RoomModule, //TODO add more module to DI...
   ],
   controllers: [AppController],
   providers: [AppService],
