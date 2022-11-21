@@ -14,27 +14,11 @@ export class UserServiceImpl implements IUserService {
     return await this.userRepository.save(user);
   }
 
-  async findUserByUserName(userName: string): Promise<UserModel> {
-    try {
-      const currUser = await this.userRepository.findOne({
-        where: {
-          userName,
-        },
-      });
-
-      if (!currUser) {
-        throw new HttpException(
-          'Database error',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-
-      return currUser;
-    } catch (e) {
-      throw new HttpException(
-        'Database error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+  async findUserByEmail(email: string): Promise<UserModel> {
+    return await this.userRepository.findOne({
+      where: {
+        email,
+      },
+    });
   }
 }
