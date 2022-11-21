@@ -30,7 +30,8 @@ import { RoomModule } from './room/room.module';
     }),
     AuthModule,
     UserModule,
-    RoomModule, //TODO add more module to DI...
+    RoomModule,
+    AuthModule, //TODO add more module to DI...
   ],
   controllers: [AppController],
   providers: [AppService],

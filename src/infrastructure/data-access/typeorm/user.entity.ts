@@ -1,5 +1,4 @@
 import { PasswordTransformer } from './../../../application/common/password.transformer';
-import { RoleModel } from './role.entity';
 import {
   Column,
   Entity,
@@ -8,12 +7,22 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { IsNotEmpty } from 'class-validator';
 import { RoomModel } from './room.entity';
+import { RoleModel } from './role.entity';
 
 @Entity({ name: 'users' })
 export class UserModel {
   @PrimaryGeneratedColumn()
   user_id: number;
+
+  @IsNotEmpty()
+  @Column({
+    name: 'user_name',
+    nullable: false,
+    unique: true,
+  })
+  userName: string;
 
   @Column({
     nullable: false,
