@@ -4,7 +4,7 @@ import {
   ApiUnauthorizedResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { LoginRequestDTO } from '../dto/login.dto';
+import { LoginRequestDTO } from './dto/login.dto';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 

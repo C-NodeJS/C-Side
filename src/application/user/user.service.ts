@@ -1,8 +1,8 @@
-import { IUserService } from '../../domain/usecases/user.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserModel } from '../../infrastructure/data-access/typeorm/user.entity';
 import { Repository } from 'typeorm';
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { UserModel } from '../../infrastructure/data-access/typeorm/user.entity';
+import { IUserService } from '../../domain/usecases/user.service';
 
 @Injectable()
 export class UserServiceImpl implements IUserService {
@@ -14,13 +14,22 @@ export class UserServiceImpl implements IUserService {
     return await this.userRepository.save(user);
   }
 
-  async findUser(username: string): Promise<UserModel> {
+  async findUserByUserName(userName: string): Promise<UserModel> {
     try {
-      return await this.userRepository.findOne({
+      const currUser = await this.userRepository.findOne({
         where: {
-          userName: username,
+          userName,
         },
       });
+
+      if (!currUser) {
+        throw new HttpException(
+          'Database error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      return currUser;
     } catch (e) {
       throw new HttpException(
         'Database error',

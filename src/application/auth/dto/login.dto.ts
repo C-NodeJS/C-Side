@@ -4,7 +4,7 @@ export class LoginRequestDTO {
   @ApiProperty({
     required: true,
   })
-  username: string;
+  userName: string;
 
   @ApiProperty({
     required: true,
