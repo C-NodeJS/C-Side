@@ -47,17 +47,23 @@ export class AuthService {
           error: 'Internal Server Error',
         };
       }
+      const createUserData = {
+        email: payload.email,
+        password: payload.password,
+        name: payload.name,
+        phone: payload.phone,
+        address: payload.address,
+      } as any as UserModel;
+      const user = await this.userService.createUser(createUserData);
+      const accessTokenKey = randomBytes(64).toString('hex');
+      const accessToken = this.createToken(user, accessTokenKey);
+      return accessToken;
+    } else {
+      return {
+        status_code: 9002,
+        message: 'Bad request',
+        error: 'Missing email!',
+      };
     }
-    const createUserData = {
-      email: payload.email,
-      password: payload.password,
-      name: payload.name,
-      phone: payload.phone,
-      address: payload.address,
-    } as any as UserModel;
-    const user = await this.userService.createUser(createUserData);
-    const accessTokenKey = randomBytes(64).toString('hex');
-    const accessToken = this.createToken(user, accessTokenKey);
-    return accessToken;
   }
 }
