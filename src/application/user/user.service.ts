@@ -37,4 +37,16 @@ export class UserServiceImpl implements IUserService {
       );
     }
   }
+  async findAllPermissionOfUser(user: Partial<UserModel>) {
+    const data: UserModel = await this.userRepository.findOne({
+      where: { userName: user.userName },
+      relations: {
+        role: {
+          permissions: { object: true },
+        },
+      },
+    });
+    console.log(data?.role?.permissions);
+    return 'OK';
+  }
 }
