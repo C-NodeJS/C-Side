@@ -12,11 +12,6 @@ export class CreateRoomRequestDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  room_id: number;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
   name: string;
 
   @ApiProperty()
@@ -60,15 +55,6 @@ export class CreateRoomRequestDTO {
   @IsBoolean()
   @IsNotEmpty()
   is_active: boolean;
-}
-export class Location {
-  @ApiProperty()
-  @IsNumber()
-  long: number;
-
-  @ApiProperty()
-  @IsNumber()
-  lat: number;
 }
 export class CreateRoomReponseDTO {
   name: string;

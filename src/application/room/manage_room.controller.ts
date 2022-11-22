@@ -49,16 +49,16 @@ export class ManageRoomController {
       .accept(await this.ManageRoomService.createRoom(Room))
       .render();
   }
-  @Put('/')
+  @Put('/:room_id')
   @ApiOkResponse({ description: 'Success!' })
   async updateRoom(
-    @Req() request: any,
     @Res() response: Response,
     @Body() Room: CreateRoomRequestDTO,
+    @Param() { room_id }: IdRoomReponseDTO,
   ) {
     const httpPresenter = new HttpPresenter(response);
     return httpPresenter
-      .accept(await this.ManageRoomService.UpdateRoom(Room))
+      .accept(await this.ManageRoomService.updateRoom(Room, { room_id }))
       .render();
   }
   @Delete('/:room_id')
