@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm/dist/typeorm.module';
 import { RoomModule } from './room/room.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { CaslModule } from './casl/casl.module';
 
 @Module({
   imports: [
@@ -31,6 +32,8 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     RoomModule,
     AuthModule, //TODO add more module to DI...
+    CaslModule,
+    //TODO add more module to DI...
   ],
   controllers: [AppController],
   providers: [AppService],
