@@ -25,7 +25,7 @@ export class UserModel {
   userName: string;
 
   @Column({
-    nullable: false,
+    nullable: true,
   })
   name?: string;
 
