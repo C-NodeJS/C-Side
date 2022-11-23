@@ -39,7 +39,7 @@ export class AuthService {
 
   async register(payload: RegisterRequestDTO) {
     if (payload.email) {
-      const checkEmailUser = await this.userService.getByUserEmail(
+      const checkEmailUser = await this.userService.findUserByEmail(
         payload.email,
       );
       if (checkEmailUser) {
@@ -68,14 +68,12 @@ export class AuthService {
       };
     }
   }
-  async validateUser(userName: string, password: string): Promise<any> {
-    const user = await this.userService.findUserByUserName(userName);
+
+  async validateUser(email: string, password: string): Promise<any> {
+    const user = await this.userService.findUserByEmail(email);
 
     if (!user) {
-      throw new HttpException(
-        'Database error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('User is not exist', HttpStatus.NOT_FOUND);
     }
     const isValidPassword = Hash.compare(password, user.password);
 
@@ -87,7 +85,7 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { userName: user.userName, sub: user.userId };
+    const payload = { email: user.email, sub: user.userId };
 
     return {
       access_token: this.jwtService.sign(payload),
