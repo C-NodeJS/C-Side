@@ -31,9 +31,8 @@ import { CaslModule } from './casl/casl.module';
     }),
     UserModule,
     RoomModule,
-    AuthModule, //TODO add more module to DI...
+    AuthModule,
     CaslModule,
-    //TODO add more module to DI...
   ],
   controllers: [AppController],
   providers: [AppService],
