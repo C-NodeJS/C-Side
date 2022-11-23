@@ -12,8 +12,10 @@ import { RoleModel } from './role.entity';
 
 @Entity({ name: 'users' })
 export class UserModel {
-  @PrimaryGeneratedColumn()
-  user_id: number;
+  @PrimaryGeneratedColumn({
+    name: 'user_id',
+  })
+  userId: number;
 
   @IsNotEmpty()
   @Column({
@@ -40,6 +42,7 @@ export class UserModel {
 
   @Column({
     nullable: false,
+    unique: true,
   })
   email: string;
 
@@ -50,21 +53,26 @@ export class UserModel {
 
   @Column({
     name: 'is_active',
-    type: 'smallint',
-    width: 1,
-    nullable: true,
+    type: 'boolean',
+    default: true,
   })
-  isActive?: number;
+  isActive: boolean;
 
   @Column({
     nullable: true,
   })
   avatar?: string;
 
+  @Column({
+    name: 'role_id',
+    nullable: true,
+  })
+  roleId: number;
+
   @OneToMany(() => RoomModel, (room) => room.user)
   rooms?: RoomModel[];
 
   @ManyToOne(() => RoleModel, (role) => role.users)
   @JoinColumn({ name: 'role_id' })
-  role_id: RoleModel;
+  role: RoleModel;
 }

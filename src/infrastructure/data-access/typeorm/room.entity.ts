@@ -10,8 +10,10 @@ import { UserModel } from './user.entity';
 
 @Entity({ name: 'rooms' })
 export class RoomModel {
-  @PrimaryGeneratedColumn()
-  room_id: number;
+  @PrimaryGeneratedColumn({
+    name: 'room_id',
+  })
+  roomId: number;
 
   @Column()
   name: string;
@@ -50,10 +52,11 @@ export class RoomModel {
   rating: number;
 
   @Column({
+    name: 'is_active',
     type: 'boolean',
     default: true,
   })
-  is_active: boolean;
+  isActive: boolean;
 
   @ManyToOne(() => UserModel, (user) => user.rooms)
   @JoinColumn({ name: 'owner' })
