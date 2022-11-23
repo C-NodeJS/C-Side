@@ -18,7 +18,7 @@ export class UserModel {
   @IsNotEmpty()
   @Column({
     name: 'user_name',
-    nullable: false,
+    nullable: true,
     unique: true,
   })
   userName: string;
