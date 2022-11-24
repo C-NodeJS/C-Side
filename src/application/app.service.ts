@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager } from 'typeorm';
+import { EntityManager, getMetadataArgsStorage } from 'typeorm';
 import { UserModel } from 'src/infrastructure/data-access/typeorm/user.entity';
 import { RoleModel } from 'src/infrastructure/data-access/typeorm/role.entity';
 import { RoomModel } from 'src/infrastructure/data-access/typeorm/room.entity';
@@ -16,6 +16,12 @@ export class AppService {
 
   async seed() {
     try {
+      const entities = getMetadataArgsStorage().tables;
+      for (const entity of entities) {
+        const name = entity.name;
+        const repo = this.entityManager.getRepository(name);
+        await repo.query(`TRUNCATE ${name} RESTART IDENTITY CASCADE;`);
+      }
       const objUser = new ObjectModel();
       objUser.name = 'UserModel';
       const objRoom = new ObjectModel();
