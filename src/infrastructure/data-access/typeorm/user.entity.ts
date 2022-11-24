@@ -1,3 +1,4 @@
+import { PasswordTransformer } from './../../../application/common/password.transformer';
 import {
   Column,
   Entity,
@@ -12,21 +13,23 @@ import { RoleModel } from './role.entity';
 
 @Entity({ name: 'users' })
 export class UserModel {
-  @PrimaryGeneratedColumn()
-  user_id: number;
+  @PrimaryGeneratedColumn({
+    name: 'user_id',
+  })
+  userId: number;
 
   @IsNotEmpty()
   @Column({
     name: 'user_name',
-    nullable: false,
+    nullable: true,
     unique: true,
   })
   userName: string;
 
   @Column({
-    nullable: false,
+    nullable: true,
   })
-  name: string;
+  name?: string;
 
   @Column({
     nullable: true,
@@ -40,31 +43,38 @@ export class UserModel {
 
   @Column({
     nullable: false,
+    unique: true,
   })
   email: string;
 
   @Column({
     nullable: false,
+    transformer: new PasswordTransformer(),
   })
   password: string;
 
   @Column({
     name: 'is_active',
-    type: 'smallint',
-    width: 1,
-    nullable: true,
+    type: 'boolean',
+    default: true,
   })
-  isActive?: number;
+  isActive: boolean;
 
   @Column({
     nullable: true,
   })
   avatar?: string;
 
+  @Column({
+    name: 'role_id',
+    nullable: true,
+  })
+  roleId: number;
+
   @OneToMany(() => RoomModel, (room) => room.user)
   rooms?: RoomModel[];
 
   @ManyToOne(() => RoleModel, (role) => role.users)
   @JoinColumn({ name: 'role_id' })
-  role_id: RoleModel;
+  role: RoleModel;
 }
