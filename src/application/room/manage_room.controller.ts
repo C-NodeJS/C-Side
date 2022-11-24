@@ -1,8 +1,9 @@
 import {
   RoomReponseDTO,
-  CreateRoomReponseDTO,
+  RoomReponsDTO,
   CreateRoomRequestDTO,
   IdRoomReponseDTO,
+  GetQueryDTO,
 } from './dto/manage_room.dto';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import {
@@ -15,6 +16,7 @@ import {
   Param,
   Put,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ManageRoomServiceImpl } from './manage_room.service';
@@ -26,14 +28,14 @@ export class ManageRoomController {
   constructor(private ManageRoomService: ManageRoomServiceImpl) {}
   @Get()
   @ApiOkResponse({ description: 'Success!' })
-  async getAllRoom(): Promise<RoomReponseDTO> {
-    return await this.ManageRoomService.getAllRoom();
+  async getAllRoom(@Query() { pageSize, pageNumber }: GetQueryDTO) {
+    return await this.ManageRoomService.getAllRoom({ pageSize, pageNumber });
   }
   @Get('/:room_id')
   @ApiOkResponse({ description: 'Success!' })
   async getRoomDetail(
     @Param() id_room: IdRoomReponseDTO,
-  ): Promise<CreateRoomReponseDTO> {
+  ): Promise<RoomReponsDTO> {
     return await this.ManageRoomService.getRoomDetail(id_room);
   }
 
