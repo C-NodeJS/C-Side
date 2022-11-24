@@ -49,5 +49,5 @@ export class PermissionModel {
       referencedColumnName: 'id',
     },
   })
-  roles: RoleModel[];
+  roles: RoleModel;
 }

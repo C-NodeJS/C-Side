@@ -21,9 +21,9 @@ export class AppService {
       const objRoom = new ObjectModel();
       objRoom.name = 'RoomModel';
       const rsa = new RoleModel();
-      rsa.name = 'Super Admin';
+      rsa.name = 'System Admin';
       const rha = new RoleModel();
-      rha.name = 'Hotel Admin';
+      rha.name = 'Host';
       const rcl = new RoleModel();
       rcl.name = 'Client';
       const res = await Promise.all([
@@ -41,42 +41,55 @@ export class AppService {
 
       //Super Admin can manage User
       const permission1 = new PermissionModel();
-      permission1.roles = [rsa];
+      permission1.id = 1;
+      permission1.roles = rsa;
       permission1.action = PermissionAction.MANAGE;
       // permission1.condition = JSON.stringify({ role_code: rsa.id });
       permission1.objectId = objUser.id;
       permission1.object = objUser;
       await this.entityManager.save(permission1);
 
-      //Super Admin can manage Room
+      // //System Admin can manage Room
       const permission2 = new PermissionModel();
-      permission2.roles = [rsa];
+      permission2.id = 2;
+      permission2.roles = rsa;
       permission2.action = PermissionAction.MANAGE;
-      // permission2.condition = JSON.stringify({ role_code: rsa.id });
       permission2.objectId = objRoom.id;
       permission2.object = objRoom;
       await this.entityManager.save(permission2);
 
       //Hotel Admin can manage Room
       const permission3 = new PermissionModel();
-      permission3.roles = [rha];
+      permission3.id = 3;
+      permission3.roles = rha;
       permission3.action = PermissionAction.MANAGE;
-      // permission3.condition = JSON.stringify({ role_code: rha.id });
+      permission3.condition = JSON.stringify({ owner: 'id' });
       permission3.objectId = objRoom.id;
       permission3.object = objRoom;
       await this.entityManager.save(permission3);
 
+      // Client can read Room
+      const permission4 = new PermissionModel();
+      permission4.id = 4;
+      permission4.roles = rcl;
+      permission4.action = PermissionAction.READ;
+      permission4.objectId = objRoom.id;
+      permission4.object = objRoom;
+      await this.entityManager.save(permission4);
+
       //Save Role Permission
       rsa.permissions = [permission1, permission2];
       rha.permissions = [permission3];
+      rcl.permissions = [permission4];
       await Promise.all([
         this.entityManager.save(rsa),
         this.entityManager.save(rha),
+        this.entityManager.save(rcl),
       ]);
 
       //Add Super Admin
       const usa = new UserModel();
-      usa.name = 'Super Admin';
+      usa.name = 'System Admin';
       usa.userName = 'admin';
       usa.email = 'admin@cside.com';
       usa.password =
@@ -87,16 +100,25 @@ export class AppService {
 
       //Add Hotel Admin
       const uha = new UserModel();
-      uha.name = 'Hotel Admin';
-      uha.userName = 'manager';
-      uha.email = 'manager@cside.com';
+      uha.name = 'Host';
+      uha.userName = 'host';
+      uha.email = 'host@cside.com';
       uha.password =
         '$2y$10$OHU7ObPm1yj/szOyCCy0EuiooQVCGqAuuVzZkHHRDzG.8eUhWlwLS';
       uha.role = rha;
       uha.roleId = rha.id;
       await this.entityManager.save(uha);
-      // rsa.users = [usa];
-      // await this.entityManager.save(rsa);
+      // Add Client
+      const ucl = new UserModel();
+      ucl.name = 'Client';
+      ucl.userName = 'client';
+      ucl.email = 'client@cside.com';
+      ucl.password =
+        '$2y$10$OHU7ObPm1yj/szOyCCy0EuiooQVCGqAuuVzZkHHRDzG.8eUhWlwLS';
+      ucl.role = rcl;
+      ucl.roleId = rcl.id;
+      await this.entityManager.save(ucl);
+
       return 'init data success';
     } catch (err) {
       console.log(err);

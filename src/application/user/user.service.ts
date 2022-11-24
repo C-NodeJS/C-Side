@@ -7,7 +7,8 @@ import { IUserService } from '../../domain/usecases/user.service';
 @Injectable()
 export class UserServiceImpl implements IUserService {
   constructor(
-    @InjectRepository(UserModel) private userRepository: Repository<UserModel>,
+    @InjectRepository(UserModel)
+    private userRepository: Repository<UserModel>,
   ) {}
 
   async createUser(user: UserModel): Promise<UserModel> {
@@ -46,7 +47,6 @@ export class UserServiceImpl implements IUserService {
         },
       },
     });
-    console.log(data?.role?.permissions);
-    return 'OK';
+    return data?.role?.permissions ?? null;
   }
 }
