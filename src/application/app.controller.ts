@@ -12,7 +12,6 @@ export class AppController {
 
   @Get('init')
   async initial(): Promise<string> {
-    console.log('Init data');
     return await this.appService.seed();
   }
 }

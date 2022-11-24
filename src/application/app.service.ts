@@ -45,12 +45,11 @@ export class AppService {
       rha.id = res[3].id;
       rcl.id = res[4].id;
 
-      //Super Admin can manage User
+      //System Admin can manage User
       const permission1 = new PermissionModel();
       permission1.id = 1;
       permission1.roles = rsa;
       permission1.action = PermissionAction.MANAGE;
-      // permission1.condition = JSON.stringify({ role_code: rsa.id });
       permission1.objectId = objUser.id;
       permission1.object = objUser;
       await this.entityManager.save(permission1);
@@ -64,7 +63,7 @@ export class AppService {
       permission2.object = objRoom;
       await this.entityManager.save(permission2);
 
-      //Hotel Admin can manage Room
+      //Host can manage Room
       const permission3 = new PermissionModel();
       permission3.id = 3;
       permission3.roles = rha;

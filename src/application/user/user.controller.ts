@@ -38,12 +38,6 @@ export class UserController {
     @Body(MapPipe(CreateUserRequestDTO, UserModel)) user: UserModel,
   ) {
     const httpPresenter = new HttpPresenter(response);
-    // const ability = await this.abilityFactory.defineAbility(request.user);
-    // const isAllowed = ability.can(PermissionAction.CREATE, UserModel);
-    // if (!isAllowed)
-    //   return httpPresenter
-    //     .reject(new ForbiddenException('You dont have access to create user!'))
-    //     .render();
     return httpPresenter
       .accept(await this.userService.createUser(user))
       .render();
