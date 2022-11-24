@@ -94,7 +94,7 @@ export class RoomReponsDTO {
   description?: string;
   image: string;
   rating?: number;
-  is_active: boolean;
+  isActive: boolean;
 }
 export class RoomReponseDTO {
   data: RoomReponsDTO[];

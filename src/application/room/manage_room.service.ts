@@ -26,7 +26,6 @@ export class ManageRoomServiceImpl {
       RoomS.description = Room.description;
       RoomS.image = Room.image;
       RoomS.rating = Room.rating;
-      RoomS.is_active = Room.is_active;
       RoomS.location = `${Room?.location[0]?.lat},${Room?.location[0]?.lng}`;
       const room = await this.roomRepository.create(RoomS);
       return await this.roomRepository.save(room);
@@ -39,7 +38,7 @@ export class ManageRoomServiceImpl {
     { room_id }: IdRoomReponseDTO,
   ): Promise<RoomReponsDTO> {
     const room = await this.roomRepository.findOneBy({
-      room_id,
+      roomId: room_id,
     });
     if (!room) {
       throw new BadRequestException('data not found');
@@ -51,7 +50,7 @@ export class ManageRoomServiceImpl {
     room.description = Room.description;
     room.image = Room.image;
     room.rating = Room.rating;
-    room.is_active = Room.is_active;
+    room.isActive = Room.is_active;
     const data = await this.roomRepository.save(room);
 
     return data;
@@ -69,13 +68,13 @@ export class ManageRoomServiceImpl {
     };
   }
   async getRoomDetail({ room_id }: IdRoomReponseDTO): Promise<RoomReponsDTO> {
-    const data = await this.roomRepository.findOneBy({ room_id });
+    const data = await this.roomRepository.findOneBy({ roomId: room_id });
     if (!data) throw new BadRequestException('data not found');
     return data;
   }
   async removeRoom({ room_id }: IdRoomReponseDTO): Promise<boolean> {
     const room = await this.roomRepository.findOneBy({
-      room_id,
+      roomId: room_id,
     });
     if (!room) {
       throw new BadRequestException('data not found');
