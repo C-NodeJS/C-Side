@@ -1,3 +1,4 @@
+import { PasswordTransformer } from './../../../application/common/password.transformer';
 import {
   Column,
   Entity,
@@ -26,9 +27,9 @@ export class UserModel {
   userName: string;
 
   @Column({
-    nullable: false,
+    nullable: true,
   })
-  name: string;
+  name?: string;
 
   @Column({
     nullable: true,
@@ -48,6 +49,7 @@ export class UserModel {
 
   @Column({
     nullable: false,
+    transformer: new PasswordTransformer(),
   })
   password: string;
 
