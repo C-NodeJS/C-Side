@@ -54,7 +54,7 @@ export class AppService {
       permission1.object = objUser;
       await this.entityManager.save(permission1);
 
-      // //System Admin can manage Room
+      // System Admin can manage Room
       const permission2 = new PermissionModel();
       permission2.id = 2;
       permission2.roles = rsa;
@@ -63,7 +63,7 @@ export class AppService {
       permission2.object = objRoom;
       await this.entityManager.save(permission2);
 
-      //Host can manage Room
+      // Host can manage Room
       const permission3 = new PermissionModel();
       permission3.id = 3;
       permission3.roles = rha;
@@ -92,7 +92,7 @@ export class AppService {
         this.entityManager.save(rcl),
       ]);
 
-      //Add Super Admin
+      //Add System Admin
       const usa = new UserModel();
       usa.name = 'System Admin';
       usa.userName = 'admin';
@@ -103,7 +103,7 @@ export class AppService {
       usa.roleId = rsa.id;
       await this.entityManager.save(usa);
 
-      //Add Hotel Admin
+      //Add Host
       const uha = new UserModel();
       uha.name = 'Host';
       uha.userName = 'host';
