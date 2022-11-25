@@ -15,11 +15,22 @@ export class UserServiceImpl implements IUserService {
         return await this.userRepository.save(user);
     }
 
-    async findUserByEmail(email: string): Promise<UserModel> {
-        return await this.userRepository.findOne({
-            where: {
-                email,
-            },
-        });
-    }
+  async findUserByEmail(email: string): Promise<UserModel> {
+    return await this.userRepository.findOne({
+      where: {
+        email,
+      },
+    });
+  }
+  async findAllPermissionOfUser(user: Partial<UserModel>) {
+    const data: UserModel = await this.userRepository.findOne({
+      where: { userName: user.userName },
+      relations: {
+        role: {
+          permissions: { object: true },
+        },
+      },
+    });
+    return data?.role?.permissions ?? null;
+  }
 }

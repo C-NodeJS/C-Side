@@ -65,9 +65,10 @@ export class ManageRoomServiceImpl {
     }
 
     async getAllRoom({ pageSize, pageNumber }: GetQueryDTO, user) {
-        const take = pageSize;
+        const take = +pageSize || 20;
+        pageNumber = +pageNumber || 1;
         const userId = await this.userService.findUserByEmail(user.email);
-        const skip = (pageNumber - 1) * pageSize;
+        const skip = (pageNumber - 1) * take;
         const [data, total] = await this.roomRepository.findAndCount({
             where: { user: { userId: userId.userId } },
             take,

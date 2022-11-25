@@ -41,13 +41,13 @@ export class PermissionModel {
   @JoinTable({
     name: 'role_permission',
     joinColumn: {
-      name: 'permission_id',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
       name: 'role_id',
       referencedColumnName: 'id',
     },
+    inverseJoinColumn: {
+      name: 'permission_id',
+      referencedColumnName: 'id',
+    },
   })
-  roles: RoleModel[];
+  roles: RoleModel;
 }
