@@ -16,9 +16,15 @@ export class UserServiceImpl implements IUserService {
 
   async findUserByEmail(email: string): Promise<UserModel> {
     return await this.userRepository.findOne({
-      where: {
-        email,
-      },
+      where: { email },
+    });
+  }
+
+  async findUserByEmailOrPhoneNumber(
+    emailOrPhoneNumber: string,
+  ): Promise<UserModel> {
+    return await this.userRepository.findOne({
+      where: [{ email: emailOrPhoneNumber }, { phone: emailOrPhoneNumber }],
     });
   }
 }

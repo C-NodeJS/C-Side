@@ -68,8 +68,13 @@ export class AuthService {
     return accessToken;
   }
 
-  async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.userService.findUserByEmail(email);
+  async validateUser(
+    emailOrPhoneNumber: string,
+    password: string,
+  ): Promise<any> {
+    const user = await this.userService.findUserByEmailOrPhoneNumber(
+      emailOrPhoneNumber,
+    );
 
     if (!user) {
       throw new HttpException('User is not exist', HttpStatus.NOT_FOUND);
@@ -84,7 +89,15 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { email: user.email, sub: user.userId };
+    const currUser = await this.userService.findUserByEmailOrPhoneNumber(
+      user.emailOrPhoneNumber,
+    );
+    const payload = {
+      email: currUser.email,
+      sub: user.currUser,
+      phone: currUser.phone,
+      userId: currUser.userId,
+    };
 
     return {
       access_token: this.jwtService.sign(payload),
