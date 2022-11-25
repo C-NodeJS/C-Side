@@ -11,10 +11,8 @@ import { Type } from 'class-transformer';
 import { RoomStatus } from 'src/infrastructure/data-access/typeorm/enum';
 
 export class GetQueryDTO {
-    @ApiProperty()
     pageSize: number;
 
-    @ApiProperty()
     pageNumber: number;
 }
 
