@@ -1,3 +1,5 @@
+import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
+import { User } from './admin.decorator';
 import {
   RoomReponseDTO,
   RoomReponsDTO,
@@ -5,9 +7,10 @@ import {
   IdRoomReponseDTO,
   GetQueryDTO,
 } from './dto/manage_room.dto';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import {
   Body,
+  UseGuards,
   Controller,
   Post,
   Req,
@@ -23,13 +26,18 @@ import { ManageRoomServiceImpl } from './manage_room.service';
 import { HttpPresenter } from '../http-presenters';
 
 @ApiTags('manage_room')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('/rooms')
 export class ManageRoomController {
   constructor(private ManageRoomService: ManageRoomServiceImpl) {}
   @Get()
   @ApiOkResponse({ description: 'Success!' })
-  async getAllRoom(@Query() { pageSize, pageNumber }: GetQueryDTO) {
-    return await this.ManageRoomService.getAllRoom({ pageSize, pageNumber });
+  async getAllRoom(
+    @Query() { pageSize, pageNumber }: GetQueryDTO,
+    @User() user,
+  ) {
+    return await this.ManageRoomService.getAllRoom(pageSize, pageNumber, user);
   }
   @Get('/:room_id')
   @ApiOkResponse({ description: 'Success!' })
@@ -41,15 +49,8 @@ export class ManageRoomController {
 
   @Post('/create')
   @ApiOkResponse({ description: 'Success!' })
-  async createRoom(
-    @Req() request: any,
-    @Res() response: Response,
-    @Body() Room: CreateRoomRequestDTO,
-  ) {
-    const httpPresenter = new HttpPresenter(response);
-    return httpPresenter
-      .accept(await this.ManageRoomService.createRoom(Room))
-      .render();
+  async createRoom(@Body() Room: CreateRoomRequestDTO, @User() user) {
+    return await this.ManageRoomService.createRoom(Room, user);
   }
   @Put('/:room_id')
   @ApiOkResponse({ description: 'Success!' })

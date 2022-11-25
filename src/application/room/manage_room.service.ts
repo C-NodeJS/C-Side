@@ -5,19 +5,25 @@ import {
   IdRoomReponseDTO,
   GetQueryDTO,
 } from './dto/manage_room.dto';
+import { UserServiceImpl } from '../user/user.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RoomModel } from 'src/infrastructure/data-access/typeorm/room.entity';
 import { Repository } from 'typeorm';
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { UserModel } from 'src/infrastructure/data-access/typeorm/user.entity';
 
 @Injectable()
 export class ManageRoomServiceImpl {
   constructor(
+    private readonly userService: UserServiceImpl,
     @InjectRepository(RoomModel) private roomRepository: Repository<RoomModel>,
   ) {}
 
-  async createRoom(Room: CreateRoomRequestDTO) {
+  async createRoom(Room: CreateRoomRequestDTO, user) {
     try {
+      const userId = await this.userService.findUserByEmail(user.email);
+      console.log(userId?.userId);
+
       const RoomS = new RoomModel();
       RoomS.name = Room.name;
       RoomS.capacity = Room.capacity;
@@ -26,10 +32,15 @@ export class ManageRoomServiceImpl {
       RoomS.description = Room.description;
       RoomS.image = Room.image;
       RoomS.rating = Room.rating;
+      RoomS.user = new UserModel();
+      RoomS.address = Room.address;
+      RoomS.user.userId = userId?.userId;
       RoomS.location = `${Room?.location[0]?.lat},${Room?.location[0]?.lng}`;
       const room = await this.roomRepository.create(RoomS);
       return await this.roomRepository.save(room);
     } catch (error) {
+      console.log(error);
+
       throw new BadRequestException('error');
     }
   }
@@ -55,10 +66,12 @@ export class ManageRoomServiceImpl {
 
     return data;
   }
-  async getAllRoom({ pageSize, pageNumber }: GetQueryDTO) {
+  async getAllRoom(pageSize, pageNumber, user) {
     const take = pageSize;
+    const userId = await this.userService.findUserByEmail(user.email);
     const skip = (pageNumber - 1) * pageSize;
     const [data, total] = await this.roomRepository.findAndCount({
+      where: { user: { userId: userId.userId } },
       take,
       skip,
     });

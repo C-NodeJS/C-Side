@@ -12,21 +12,16 @@ import { RoomStatus } from 'src/infrastructure/data-access/typeorm/enum';
 
 export class GetQueryDTO {
   @ApiProperty()
-  @IsInt()
+  // @IsInt()
   @IsNotEmpty()
   pageSize: number;
 
   @ApiProperty()
-  @IsInt()
+  // @IsInt()
   @IsNotEmpty()
   pageNumber: number;
 }
 export class CreateRoomRequestDTO {
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  room_id: number;
-
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
