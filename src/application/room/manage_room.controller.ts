@@ -37,7 +37,10 @@ export class ManageRoomController {
     @Query() { pageSize, pageNumber }: GetQueryDTO,
     @User() user,
   ) {
-    return await this.ManageRoomService.getAllRoom(pageSize, pageNumber, user);
+    return await this.ManageRoomService.getAllRoom(
+      { pageSize, pageNumber },
+      user,
+    );
   }
   @Get('/:room_id')
   @ApiOkResponse({ description: 'Success!' })

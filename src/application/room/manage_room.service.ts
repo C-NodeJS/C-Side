@@ -22,8 +22,6 @@ export class ManageRoomServiceImpl {
   async createRoom(Room: CreateRoomRequestDTO, user) {
     try {
       const userId = await this.userService.findUserByEmail(user.email);
-      console.log(userId?.userId);
-
       const RoomS = new RoomModel();
       RoomS.name = Room.name;
       RoomS.capacity = Room.capacity;
@@ -39,8 +37,6 @@ export class ManageRoomServiceImpl {
       const room = await this.roomRepository.create(RoomS);
       return await this.roomRepository.save(room);
     } catch (error) {
-      console.log(error);
-
       throw new BadRequestException('error');
     }
   }
@@ -63,10 +59,9 @@ export class ManageRoomServiceImpl {
     room.rating = Room.rating;
     room.isActive = Room.is_active;
     const data = await this.roomRepository.save(room);
-
     return data;
   }
-  async getAllRoom(pageSize, pageNumber, user) {
+  async getAllRoom({ pageSize, pageNumber }: GetQueryDTO, user) {
     const take = pageSize;
     const userId = await this.userService.findUserByEmail(user.email);
     const skip = (pageNumber - 1) * pageSize;
