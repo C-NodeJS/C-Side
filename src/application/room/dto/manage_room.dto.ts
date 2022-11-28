@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsEnum,
-  IsInt,
   IsNotEmpty,
   IsNumber,
   IsString,
@@ -13,13 +12,20 @@ import { RoomStatus } from 'src/infrastructure/data-access/typeorm/enum';
 export class GetQueryDTO {
   @ApiProperty()
   @IsNumber()
-  @IsNotEmpty()
-  pageSize: number;
+  pageSize?: number;
 
   @ApiProperty()
   @IsNumber()
-  @IsNotEmpty()
-  pageNumber: number;
+  pageNumber?: number;
+}
+export class Location {
+  @ApiProperty()
+  @IsNumber()
+  lng: number;
+
+  @ApiProperty()
+  @IsNumber()
+  lat: number;
 }
 export class CreateRoomRequestDTO {
   @ApiProperty()
@@ -30,7 +36,7 @@ export class CreateRoomRequestDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  address: string;
+  address?: string;
 
   @ApiProperty()
   @IsNumber()
@@ -45,7 +51,7 @@ export class CreateRoomRequestDTO {
   @ApiProperty()
   @IsNotEmpty()
   @Type(() => Location)
-  location: Location[];
+  location: Location;
 
   @ApiProperty()
   @IsEnum(RoomStatus)
@@ -53,13 +59,11 @@ export class CreateRoomRequestDTO {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
   description?: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
-  image: string;
+  image?: string;
 
   @ApiProperty()
   @IsNumber()
@@ -70,15 +74,7 @@ export class CreateRoomRequestDTO {
   @IsNotEmpty()
   is_active: boolean;
 }
-export class Location {
-  @ApiProperty()
-  @IsNumber()
-  lng: number;
 
-  @ApiProperty()
-  @IsNumber()
-  lat: number;
-}
 export class RoomReponsDTO {
   name: string;
   address: string;

@@ -13,7 +13,6 @@ import {
   UseGuards,
   Controller,
   Post,
-  Req,
   Res,
   Get,
   Param,
@@ -36,7 +35,7 @@ export class ManageRoomController {
   async getAllRoom(
     @Query() { pageSize, pageNumber }: GetQueryDTO,
     @User() user,
-  ) {
+  ): Promise<RoomReponseDTO> {
     return await this.ManageRoomService.getAllRoom(
       { pageSize, pageNumber },
       user,
