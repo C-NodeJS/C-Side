@@ -95,6 +95,7 @@ export class ManageRoomServiceImpl {
     if (!room) {
       throw new BadRequestException('data not found');
     }
+    await this.roomRepository.remove(room);
     return true;
   }
 }
