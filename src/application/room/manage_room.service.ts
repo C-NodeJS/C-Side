@@ -1,8 +1,8 @@
 import {
   RoomReponsDTO,
-  RoomReponseDTO,
+  RoomResponseDTO,
   CreateRoomRequestDTO,
-  IdRoomReponseDTO,
+  RoomIdResponseDTO,
   GetQueryDTO,
 } from './dto/manage_room.dto';
 import { UserServiceImpl } from '../user/user.service';
@@ -16,7 +16,8 @@ import { UserModel } from 'src/infrastructure/data-access/typeorm/user.entity';
 export class ManageRoomServiceImpl {
   constructor(
     private readonly userService: UserServiceImpl,
-    @InjectRepository(RoomModel) private roomRepository: Repository<RoomModel>,
+    @InjectRepository(RoomModel)
+    private roomRepository: Repository<RoomModel>,
   ) {}
 
   async createRoom(Room: CreateRoomRequestDTO, user) {
@@ -33,16 +34,17 @@ export class ManageRoomServiceImpl {
       RoomS.user = new UserModel();
       RoomS.address = Room.address;
       RoomS.user.userId = userId?.userId;
-      RoomS.location = `${Room?.location?.lat},${Room?.location?.lng}`;
+      RoomS.location = `${Room?.location[0]?.lat},${Room?.location[0]?.lng}`;
       const room = await this.roomRepository.create(RoomS);
       return await this.roomRepository.save(room);
     } catch (error) {
       throw new BadRequestException('error');
     }
   }
+
   async updateRoom(
     Room: CreateRoomRequestDTO,
-    { room_id }: IdRoomReponseDTO,
+    { room_id }: RoomIdResponseDTO,
   ): Promise<RoomReponsDTO> {
     const room = await this.roomRepository.findOneBy({
       roomId: room_id,
@@ -61,10 +63,11 @@ export class ManageRoomServiceImpl {
     const data = await this.roomRepository.save(room);
     return data;
   }
+
   async getAllRoom(
     { pageSize, pageNumber }: GetQueryDTO,
     user,
-  ): Promise<RoomReponseDTO> {
+  ): Promise<RoomResponseDTO> {
     const take = pageSize;
     const userId = await this.userService.findUserByEmail(user.email);
     const skip = (pageNumber - 1) * pageSize;
@@ -78,19 +81,20 @@ export class ManageRoomServiceImpl {
       count: total,
     };
   }
-  async getRoomDetail({ room_id }: IdRoomReponseDTO): Promise<RoomReponsDTO> {
+
+  async getRoomDetail({ room_id }: RoomIdResponseDTO): Promise<RoomReponsDTO> {
     const data = await this.roomRepository.findOneBy({ roomId: room_id });
     if (!data) throw new BadRequestException('data not found');
     return data;
   }
-  async removeRoom({ room_id }: IdRoomReponseDTO): Promise<boolean> {
+
+  async removeRoom({ room_id }: RoomIdResponseDTO): Promise<boolean> {
     const room = await this.roomRepository.findOneBy({
       roomId: room_id,
     });
     if (!room) {
       throw new BadRequestException('data not found');
     }
-    await this.roomRepository.remove(room);
     return true;
   }
 }

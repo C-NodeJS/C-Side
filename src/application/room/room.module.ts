@@ -6,9 +6,9 @@ import { ManageRoomServiceImpl } from './manage_room.service';
 import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([RoomModel]), UserModule],
-  controllers: [ManageRoomController],
-  providers: [ManageRoomServiceImpl],
-  exports: [],
+    imports: [TypeOrmModule.forFeature([RoomModel]), UserModule],
+    controllers: [ManageRoomController],
+    providers: [ManageRoomServiceImpl],
+    exports: [],
 })
 export class RoomModule {}

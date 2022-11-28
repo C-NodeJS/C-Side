@@ -27,6 +27,7 @@ export class Location {
   @IsNumber()
   lat: number;
 }
+
 export class CreateRoomRequestDTO {
   @ApiProperty()
   @IsString()
@@ -74,7 +75,6 @@ export class CreateRoomRequestDTO {
   @IsNotEmpty()
   is_active: boolean;
 }
-
 export class RoomReponsDTO {
   name: string;
   address: string;
@@ -87,13 +87,14 @@ export class RoomReponsDTO {
   rating?: number;
   isActive: boolean;
 }
-export class RoomReponseDTO {
+
+export class RoomResponseDTO {
   data: RoomReponsDTO[];
   count: number;
 }
-export class IdRoomReponseDTO {
+
+export class RoomIdResponseDTO {
   @ApiProperty()
   @IsNotEmpty()
-  @IsNumber()
   room_id: number;
 }

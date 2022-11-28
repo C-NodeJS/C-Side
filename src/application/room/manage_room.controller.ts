@@ -1,10 +1,10 @@
 import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
 import { User } from './admin.decorator';
 import {
-  RoomReponseDTO,
   RoomReponsDTO,
+  RoomResponseDTO,
   CreateRoomRequestDTO,
-  IdRoomReponseDTO,
+  RoomIdResponseDTO,
   GetQueryDTO,
 } from './dto/manage_room.dto';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
@@ -35,16 +35,17 @@ export class ManageRoomController {
   async getAllRoom(
     @Query() { pageSize, pageNumber }: GetQueryDTO,
     @User() user,
-  ): Promise<RoomReponseDTO> {
+  ): Promise<RoomResponseDTO> {
     return await this.ManageRoomService.getAllRoom(
       { pageSize, pageNumber },
       user,
     );
   }
+
   @Get('/:room_id')
   @ApiOkResponse({ description: 'Success!' })
   async getRoomDetail(
-    @Param() id_room: IdRoomReponseDTO,
+    @Param() id_room: RoomIdResponseDTO,
   ): Promise<RoomReponsDTO> {
     return await this.ManageRoomService.getRoomDetail(id_room);
   }
@@ -54,23 +55,25 @@ export class ManageRoomController {
   async createRoom(@Body() Room: CreateRoomRequestDTO, @User() user) {
     return await this.ManageRoomService.createRoom(Room, user);
   }
+
   @Put('/:room_id')
   @ApiOkResponse({ description: 'Success!' })
   async updateRoom(
     @Res() response: Response,
     @Body() Room: CreateRoomRequestDTO,
-    @Param() { room_id }: IdRoomReponseDTO,
+    @Param() { room_id }: RoomIdResponseDTO,
   ) {
     const httpPresenter = new HttpPresenter(response);
     return httpPresenter
       .accept(await this.ManageRoomService.updateRoom(Room, { room_id }))
       .render();
   }
+
   @Delete('/:room_id')
   @ApiOkResponse({ description: 'Success!' })
   async removeRoom(
     @Res() response: Response,
-    @Param() room_id: IdRoomReponseDTO,
+    @Param() room_id: RoomIdResponseDTO,
   ) {
     const httpPresenter = new HttpPresenter(response);
     return httpPresenter
