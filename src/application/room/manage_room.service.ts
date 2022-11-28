@@ -1,9 +1,9 @@
 import {
-  RoomReponsDTO,
-  RoomResponseDTO,
   CreateRoomRequestDTO,
-  RoomIdResponseDTO,
-  GetQueryDTO,
+  GetRoomQueryDTO,
+  RoomDetailResponseDTO,
+  RoomIdParamRequestDTO,
+  RoomsResponseDTO,
 } from './dto/manage_room.dto';
 import { UserServiceImpl } from '../user/user.service';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -44,8 +44,8 @@ export class ManageRoomServiceImpl {
 
   async updateRoom(
     Room: CreateRoomRequestDTO,
-    { room_id }: RoomIdResponseDTO,
-  ): Promise<RoomReponsDTO> {
+    { room_id }: RoomIdParamRequestDTO,
+  ): Promise<RoomDetailResponseDTO> {
     const room = await this.roomRepository.findOneBy({
       roomId: room_id,
     });
@@ -60,14 +60,13 @@ export class ManageRoomServiceImpl {
     room.image = Room.image;
     room.rating = Room.rating;
     room.isActive = Room.is_active;
-    const data = await this.roomRepository.save(room);
-    return data;
+    return await this.roomRepository.save(room);
   }
 
   async getAllRoom(
-    { pageSize, pageNumber }: GetQueryDTO,
+    { pageSize, pageNumber }: GetRoomQueryDTO,
     user,
-  ): Promise<RoomResponseDTO> {
+  ): Promise<RoomsResponseDTO> {
     const take = pageSize;
     const userId = await this.userService.findUserByEmail(user.email);
     const skip = (pageNumber - 1) * pageSize;
@@ -82,13 +81,19 @@ export class ManageRoomServiceImpl {
     };
   }
 
-  async getRoomDetail({ room_id }: RoomIdResponseDTO): Promise<RoomReponsDTO> {
-    const data = await this.roomRepository.findOneBy({ roomId: room_id });
-    if (!data) throw new BadRequestException('data not found');
+  async getRoomDetail({
+    room_id,
+  }: RoomIdParamRequestDTO): Promise<RoomDetailResponseDTO> {
+    const data: RoomModel = await this.roomRepository.findOneBy({
+      roomId: room_id,
+    });
+    if (!data)
+      throw new BadRequestException(`Not found room with roomId ${room_id}`);
+
     return data;
   }
 
-  async removeRoom({ room_id }: RoomIdResponseDTO): Promise<boolean> {
+  async removeRoom({ room_id }: RoomIdParamRequestDTO): Promise<boolean> {
     const room = await this.roomRepository.findOneBy({
       roomId: room_id,
     });

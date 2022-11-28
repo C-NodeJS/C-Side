@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { RoomStatus } from './enum';
 import { UserModel } from './user.entity';
+import { RoomDetailResponseDTO } from '../../../application/room/dto/manage_room.dto';
 
 @Entity({ name: 'rooms' })
 export class RoomModel {
@@ -24,7 +25,9 @@ export class RoomModel {
   @Column('int')
   capacity: number;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   price: number;
 
   @Column('point')
@@ -33,7 +36,7 @@ export class RoomModel {
   @Column({
     type: 'enum',
     enum: RoomStatus,
-    default: RoomStatus.Pending,
+    default: RoomStatus.PENDING,
   })
   status: RoomStatus;
 
@@ -61,4 +64,8 @@ export class RoomModel {
   @ManyToOne(() => UserModel, (user) => user.rooms)
   @JoinColumn({ name: 'owner' })
   user?: UserModel;
+
+  toRoomDetailResponseDTO(): RoomDetailResponseDTO {
+
+  }
 }

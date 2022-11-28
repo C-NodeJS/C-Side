@@ -1,11 +1,11 @@
 import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
 import { User } from './admin.decorator';
 import {
-  RoomReponsDTO,
-  RoomResponseDTO,
+  RoomDetailResponseDTO,
+  RoomsResponseDTO,
   CreateRoomRequestDTO,
-  RoomIdResponseDTO,
-  GetQueryDTO,
+  RoomIdParamRequestDTO,
+  GetRoomQueryDTO,
 } from './dto/manage_room.dto';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import {
@@ -30,23 +30,21 @@ import { HttpPresenter } from '../http-presenters';
 @Controller('/rooms')
 export class ManageRoomController {
   constructor(private ManageRoomService: ManageRoomServiceImpl) {}
+
   @Get()
   @ApiOkResponse({ description: 'Success!' })
   async getAllRoom(
-    @Query() { pageSize, pageNumber }: GetQueryDTO,
+    @Query() getRoomsQueryDTO: GetRoomQueryDTO,
     @User() user,
-  ): Promise<RoomResponseDTO> {
-    return await this.ManageRoomService.getAllRoom(
-      { pageSize, pageNumber },
-      user,
-    );
+  ): Promise<RoomsResponseDTO> {
+    return await this.ManageRoomService.getAllRoom(getRoomsQueryDTO, user);
   }
 
   @Get('/:room_id')
   @ApiOkResponse({ description: 'Success!' })
   async getRoomDetail(
-    @Param() id_room: RoomIdResponseDTO,
-  ): Promise<RoomReponsDTO> {
+    @Param() id_room: RoomIdParamRequestDTO,
+  ): Promise<RoomDetailResponseDTO> {
     return await this.ManageRoomService.getRoomDetail(id_room);
   }
 
@@ -61,7 +59,7 @@ export class ManageRoomController {
   async updateRoom(
     @Res() response: Response,
     @Body() Room: CreateRoomRequestDTO,
-    @Param() { room_id }: RoomIdResponseDTO,
+    @Param() { room_id }: RoomIdParamRequestDTO,
   ) {
     const httpPresenter = new HttpPresenter(response);
     return httpPresenter
@@ -73,7 +71,7 @@ export class ManageRoomController {
   @ApiOkResponse({ description: 'Success!' })
   async removeRoom(
     @Res() response: Response,
-    @Param() room_id: RoomIdResponseDTO,
+    @Param() room_id: RoomIdParamRequestDTO,
   ) {
     const httpPresenter = new HttpPresenter(response);
     return httpPresenter

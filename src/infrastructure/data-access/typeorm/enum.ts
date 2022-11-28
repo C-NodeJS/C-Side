@@ -1,6 +1,6 @@
 export enum RoomStatus {
-  Available = 'available',
-  Full = 'full',
-  Pending = 'pending',
-  Maintain = 'maintain',
+  AVAILABLE = 'available',
+  FULL = 'full',
+  PENDING = 'pending',
+  MAINTAIN = 'maintain',
 }
