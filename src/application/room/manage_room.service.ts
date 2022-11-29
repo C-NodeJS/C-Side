@@ -34,10 +34,12 @@ export class ManageRoomServiceImpl {
       RoomS.user = new UserModel();
       RoomS.address = Room.address;
       RoomS.user.userId = userId?.userId;
-      RoomS.location = `${Room?.location[0]?.lat},${Room?.location[0]?.lng}`;
+      RoomS.location = `${Room?.location?.lat},${Room?.location?.lng}`;
       const room = await this.roomRepository.create(RoomS);
       return await this.roomRepository.save(room);
     } catch (error) {
+      console.log(error);
+
       throw new BadRequestException('error');
     }
   }
@@ -68,9 +70,9 @@ export class ManageRoomServiceImpl {
     { pageSize, pageNumber }: GetQueryDTO,
     user,
   ): Promise<RoomResponseDTO> {
-    const take = pageSize;
+    const take = pageSize || 25;
     const userId = await this.userService.findUserByEmail(user.email);
-    const skip = (pageNumber - 1) * pageSize;
+    const skip = (pageNumber || 1 - 1) * take;
     const [data, total] = await this.roomRepository.findAndCount({
       where: { user: { userId: userId.userId } },
       take,

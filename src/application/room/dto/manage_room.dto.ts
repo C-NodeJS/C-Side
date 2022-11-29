@@ -11,11 +11,9 @@ import { RoomStatus } from 'src/infrastructure/data-access/typeorm/enum';
 
 export class GetQueryDTO {
   @ApiProperty()
-  @IsNumber()
   pageSize?: number;
 
   @ApiProperty()
-  @IsNumber()
   pageNumber?: number;
 }
 export class Location {
@@ -76,6 +74,7 @@ export class CreateRoomRequestDTO {
   is_active: boolean;
 }
 export class RoomReponsDTO {
+  roomId: number;
   name: string;
   address: string;
   capacity: number;
