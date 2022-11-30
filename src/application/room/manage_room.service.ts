@@ -100,7 +100,7 @@ export class ManageRoomServiceImpl {
 
   async getRoomsByLocation({ lng, lat, distance }: QueryGetRoomsByLocation): Promise<GetRoomsByLocationResponseDTO> {
     try {
-      const rooms = await this.manageRoomRepository.getRoomsByLocations({ lng, lat, distance });
+      const rooms = await this.manageRoomRepository.getRoomsByLocation({ lng, lat, distance });
       return { rooms, count: rooms.length };
     } catch (e) {
       throw new InternalServerErrorException();

@@ -32,7 +32,7 @@ export class ManageRoomRepository extends Repository<RoomModel> {
             .getRawMany();
     }
 
-    async getRoomsByLocations({ lng, lat, distance }: QueryGetRoomsByLocation): Promise<GetRoomsByLocationDTO[]> {
+    async getRoomsByLocation({ lng, lat, distance }: QueryGetRoomsByLocation): Promise<GetRoomsByLocationDTO[]> {
         return this.calculateDistance({ lng, lat, distance });
     }
 }
