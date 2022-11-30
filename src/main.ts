@@ -12,6 +12,9 @@ async function bootstrap() {
   // ConfigModule.forRoot({isGlobal: true})
   // await app.init()
   const configService = app.get(ConfigService);
+  app.enableCors({
+    origin: '*',
+  });
   const SERVER_PORT = parseInt(configService.get('SERVER_PORT')) || 3000;
 
   /**  Hot-reload. Relevant:

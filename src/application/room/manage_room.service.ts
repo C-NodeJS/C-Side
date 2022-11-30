@@ -11,7 +11,7 @@ import { RoomModel } from 'src/infrastructure/data-access/typeorm/room.entity';
 import { Repository } from 'typeorm';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { RoomStatus } from '../../infrastructure/data-access/typeorm/enum';
-import {RoomUtil} from "./room.util";
+import { RoomUtil } from "./room.util";
 
 @Injectable()
 export class ManageRoomServiceImpl {
@@ -58,11 +58,11 @@ export class ManageRoomServiceImpl {
     getRoomQueryDTO: GetRoomQueryDTO,
     user,
   ): Promise<RoomsResponseDTO> {
-    const pageSize = getRoomQueryDTO.pageSize;
-    const pageNumber = 1;
+    const pageSize = getRoomQueryDTO.pageSize || 20;
+    const pageNumber = getRoomQueryDTO.pageNumber || 1;
     const take = pageSize;
     const userId = await this.userService.findUserByEmail(user.email);
-    const skip = (pageNumber - 1) * pageSize;
+    const skip = (pageNumber || 1 - 1) * pageSize;
     const [data, total] = await this.roomRepository.findAndCount({
       where: { user: { userId: userId.userId } },
       take,
