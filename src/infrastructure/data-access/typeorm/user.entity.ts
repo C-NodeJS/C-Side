@@ -1,4 +1,4 @@
-import { PasswordTransformer } from './../../../application/common/password.transformer';
+import { PasswordTransformer } from '../../../application/common/password.transformer';
 import {
   Column,
   Entity,

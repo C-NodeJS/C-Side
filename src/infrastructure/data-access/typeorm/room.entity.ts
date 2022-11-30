@@ -13,18 +13,21 @@ export class RoomModel {
   @PrimaryGeneratedColumn({
     name: 'room_id',
   })
-  roomId: number;
+  roomId?: number;
 
   @Column()
   name: string;
 
   @Column()
-  address: string;
+  address?: string;
 
   @Column('int')
   capacity: number;
 
-  @Column()
+  @Column({
+    nullable: true,
+    type: 'float',
+  })
   price: number;
 
   @Column('point')
@@ -33,7 +36,7 @@ export class RoomModel {
   @Column({
     type: 'enum',
     enum: RoomStatus,
-    default: RoomStatus.Pending,
+    default: RoomStatus.PENDING,
   })
   status: RoomStatus;
 

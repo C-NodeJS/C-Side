@@ -4,8 +4,6 @@ import { config } from 'dotenv';
 import { join } from 'path';
 config();
 
-const configService = new ConfigService();
-
 export default new DataSource({
   type: 'postgres',
   host: process.env.DB_HOST,
@@ -21,5 +19,5 @@ export default new DataSource({
   // you can disable this if you prefer running migration manually.
   migrationsRun: true,
   logging: true,
-  migrations: [join(__dirname, '../database/migrations/**/*{.ts,.js}')],
+  migrations: [join(__dirname, '../database/**/*{.ts,.js}')],
 });
