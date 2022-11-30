@@ -1,25 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-} from 'class-validator';
+import { IsBoolean, IsEnum, IsNumber, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { RoomStatus } from 'src/infrastructure/data-access/typeorm/enum';
+import { RoomModel } from '../../../infrastructure/data-access/typeorm/room.entity';
 
 export class GetRoomQueryDTO {
   @ApiProperty({
     required: false,
   })
-  pageSize?: number = 20;
+  pageSize?: number;
 
   @ApiProperty({
     required: false,
   })
-  pageNumber?: number = 1;
+  pageNumber?: number;
 }
+
 export class Location {
   @ApiProperty({
     required: true,
@@ -33,8 +29,7 @@ export class Location {
   @IsNumber()
   lat: number;
 }
-
-export class CreateRoomRequestDTO {
+export class RoomDetailRequestDTO {
   @ApiProperty()
   @IsString()
   name: string;
@@ -97,7 +92,21 @@ export class RoomDetailResponseDTO {
   description?: string;
   image?: string;
   rating?: number;
-  isActive: boolean;
+  is_active: boolean;
+
+  constructor(roomModel: RoomModel) {
+    this.roomId = roomModel.roomId;
+    this.name = roomModel.name;
+    this.address = roomModel.address;
+    this.capacity = roomModel.capacity;
+    this.description = roomModel.description;
+    this.image = roomModel.image;
+    this.is_active = roomModel.isActive;
+    this.location = roomModel.location;
+    this.price = roomModel.price;
+    this.rating = roomModel.rating;
+    this.status = roomModel.status;
+  }
 }
 
 export class RoomsResponseDTO {
@@ -107,6 +116,5 @@ export class RoomsResponseDTO {
 
 export class RoomIdParamRequestDTO {
   @ApiProperty()
-  @IsNumber()
   room_id: number;
 }

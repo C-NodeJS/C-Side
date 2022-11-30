@@ -1,6 +1,6 @@
 import {
-  CreateRoomRequestDTO,
   GetRoomQueryDTO,
+  RoomDetailRequestDTO,
   RoomDetailResponseDTO,
   RoomIdParamRequestDTO,
   RoomsResponseDTO,
@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RoomModel } from 'src/infrastructure/data-access/typeorm/room.entity';
 import { Repository } from 'typeorm';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { UserModel } from 'src/infrastructure/data-access/typeorm/user.entity';
+import { RoomStatus } from '../../infrastructure/data-access/typeorm/enum';
 
 @Injectable()
 export class ManageRoomServiceImpl {
@@ -20,53 +20,67 @@ export class ManageRoomServiceImpl {
     private roomRepository: Repository<RoomModel>,
   ) {}
 
-  async createRoom(Room: CreateRoomRequestDTO, user) {
+  async createRoom(room: RoomDetailRequestDTO, user) {
     try {
-      const userId = await this.userService.findUserByEmail(user.email);
-      const RoomS = new RoomModel();
-      RoomS.name = Room.name;
-      RoomS.capacity = Room.capacity;
-      RoomS.price = Room.price;
-      RoomS.status = Room.status;
-      RoomS.description = Room.description;
-      RoomS.image = Room.image;
-      RoomS.rating = Room.rating;
-      RoomS.user = new UserModel();
-      RoomS.address = Room.address;
-      RoomS.user.userId = userId?.userId;
-      RoomS.location = `${Room?.location[0]?.lat},${Room?.location[0]?.lng}`;
-      const room = await this.roomRepository.create(RoomS);
-      return await this.roomRepository.save(room);
+      const currentUser = await this.userService.findUserByEmail(user.email);
+      const roomModel = new RoomModel();
+      roomModel.name = room.name;
+      roomModel.address = room.address;
+      roomModel.capacity = room.capacity;
+      roomModel.description = room.description;
+      roomModel.image = room.image;
+      roomModel.isActive = room.is_active;
+      roomModel.location = `${room.location.lat},${room.location.lng}`;
+      roomModel.price = room.price;
+      roomModel.rating = room.rating;
+      roomModel.status = RoomStatus.PENDING;
+      roomModel.user = currentUser;
+
+      return await this.roomRepository.save(roomModel);
     } catch (error) {
       throw new BadRequestException('error');
     }
   }
 
   async updateRoom(
-    Room: CreateRoomRequestDTO,
+    room: RoomDetailRequestDTO,
     { room_id }: RoomIdParamRequestDTO,
-  ): Promise<RoomDetailResponseDTO> {
-    const room = await this.roomRepository.findOneBy({
+  ): Promise<boolean> {
+    const oldRoom = await this.roomRepository.findOneBy({
       roomId: room_id,
     });
-    if (!room) {
-      throw new BadRequestException('data not found');
+    if (!oldRoom) {
+      throw new BadRequestException('Room does not exist!'); // TODO handle later
     }
-    room.name = Room.name;
-    room.capacity = Room.capacity;
-    room.price = Room.price;
-    room.status = Room.status;
-    room.description = Room.description;
-    room.image = Room.image;
-    room.rating = Room.rating;
-    room.isActive = Room.is_active;
-    return await this.roomRepository.save(room);
+
+    const roomModel = new RoomModel();
+    roomModel.name = room.name || roomModel.name;
+    roomModel.address = room.address || roomModel.address;
+    roomModel.capacity = room.capacity || roomModel.capacity;
+    roomModel.description = room.description || roomModel.description;
+    roomModel.image = room.image || roomModel.image;
+    roomModel.isActive = room.is_active || roomModel.isActive;
+    roomModel.location =
+      `${room.location.lat},${room.location.lng}` || roomModel.location;
+    console.log(`roomModel.location: ${roomModel.location}`);
+    console.log(`room.location: ${room.location.lng}`);
+    roomModel.price = room.price || roomModel.price;
+    roomModel.rating = room.rating || roomModel.rating;
+    roomModel.status = RoomStatus.PENDING || roomModel.status;
+    const updateResult = await this.roomRepository.update(
+      { roomId: room_id },
+      { ...roomModel },
+    );
+    console.log(updateResult);
+    return true;
   }
 
   async getAllRoom(
-    { pageSize, pageNumber }: GetRoomQueryDTO,
+    getRoomQueryDTO: GetRoomQueryDTO,
     user,
   ): Promise<RoomsResponseDTO> {
+    const pageSize = getRoomQueryDTO.pageSize;
+    const pageNumber = 1;
     const take = pageSize;
     const userId = await this.userService.findUserByEmail(user.email);
     const skip = (pageNumber - 1) * pageSize;
@@ -75,8 +89,11 @@ export class ManageRoomServiceImpl {
       take,
       skip,
     });
+
     return {
-      data: data,
+      data: data.map<RoomDetailResponseDTO>((value) => {
+        return new RoomDetailResponseDTO(value);
+      }),
       count: total,
     };
   }
@@ -90,7 +107,7 @@ export class ManageRoomServiceImpl {
     if (!data)
       throw new BadRequestException(`Not found room with roomId ${room_id}`);
 
-    return data;
+    return new RoomDetailResponseDTO(data);
   }
 
   async removeRoom({ room_id }: RoomIdParamRequestDTO): Promise<boolean> {
@@ -100,7 +117,7 @@ export class ManageRoomServiceImpl {
     if (!room) {
       throw new BadRequestException('data not found');
     }
-    await this.roomRepository.remove(room);
-    return true;
+    await this.roomRepository.remove(room, {});
+    return true; // TODO handle later
   }
 }

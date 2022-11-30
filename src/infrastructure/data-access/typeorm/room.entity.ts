@@ -7,26 +7,26 @@ import {
 } from 'typeorm';
 import { RoomStatus } from './enum';
 import { UserModel } from './user.entity';
-import { RoomDetailResponseDTO } from '../../../application/room/dto/manage_room.dto';
 
 @Entity({ name: 'rooms' })
 export class RoomModel {
   @PrimaryGeneratedColumn({
     name: 'room_id',
   })
-  roomId: number;
+  roomId?: number;
 
   @Column()
   name: string;
 
   @Column()
-  address: string;
+  address?: string;
 
   @Column('int')
   capacity: number;
 
   @Column({
     nullable: true,
+    type: 'float',
   })
   price: number;
 
@@ -64,8 +64,4 @@ export class RoomModel {
   @ManyToOne(() => UserModel, (user) => user.rooms)
   @JoinColumn({ name: 'owner' })
   user?: UserModel;
-
-  toRoomDetailResponseDTO(): RoomDetailResponseDTO {
-
-  }
 }

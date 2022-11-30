@@ -3,7 +3,7 @@ import { User } from './admin.decorator';
 import {
   RoomDetailResponseDTO,
   RoomsResponseDTO,
-  CreateRoomRequestDTO,
+  RoomDetailRequestDTO,
   RoomIdParamRequestDTO,
   GetRoomQueryDTO,
 } from './dto/manage_room.dto';
@@ -24,12 +24,12 @@ import { Response } from 'express';
 import { ManageRoomServiceImpl } from './manage_room.service';
 import { HttpPresenter } from '../http-presenters';
 
-@ApiTags('manage_room')
+@ApiTags('rooms')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('/rooms')
-export class ManageRoomController {
-  constructor(private ManageRoomService: ManageRoomServiceImpl) {}
+export class RoomController {
+  constructor(private roomsService: ManageRoomServiceImpl) {}
 
   @Get()
   @ApiOkResponse({ description: 'Success!' })
@@ -37,33 +37,34 @@ export class ManageRoomController {
     @Query() getRoomsQueryDTO: GetRoomQueryDTO,
     @User() user,
   ): Promise<RoomsResponseDTO> {
-    return await this.ManageRoomService.getAllRoom(getRoomsQueryDTO, user);
+    return await this.roomsService.getAllRoom(getRoomsQueryDTO, user);
   }
 
   @Get('/:room_id')
   @ApiOkResponse({ description: 'Success!' })
   async getRoomDetail(
-    @Param() id_room: RoomIdParamRequestDTO,
+    @Param() roomId: RoomIdParamRequestDTO,
   ): Promise<RoomDetailResponseDTO> {
-    return await this.ManageRoomService.getRoomDetail(id_room);
+    return await this.roomsService.getRoomDetail(roomId);
   }
 
   @Post('/create')
   @ApiOkResponse({ description: 'Success!' })
-  async createRoom(@Body() Room: CreateRoomRequestDTO, @User() user) {
-    return await this.ManageRoomService.createRoom(Room, user);
+  async createRoom(@Body() room: RoomDetailRequestDTO, @User() user) {
+    return await this.roomsService.createRoom(room, user);
   }
 
   @Put('/:room_id')
   @ApiOkResponse({ description: 'Success!' })
   async updateRoom(
     @Res() response: Response,
-    @Body() Room: CreateRoomRequestDTO,
+    @Body()
+    room: RoomDetailRequestDTO,
     @Param() { room_id }: RoomIdParamRequestDTO,
   ) {
     const httpPresenter = new HttpPresenter(response);
     return httpPresenter
-      .accept(await this.ManageRoomService.updateRoom(Room, { room_id }))
+      .accept(await this.roomsService.updateRoom(room, { room_id }))
       .render();
   }
 
@@ -75,7 +76,7 @@ export class ManageRoomController {
   ) {
     const httpPresenter = new HttpPresenter(response);
     return httpPresenter
-      .accept(await this.ManageRoomService.removeRoom(room_id))
+      .accept(await this.roomsService.removeRoom(room_id))
       .render();
   }
 }
