@@ -11,6 +11,7 @@ import { RoomModel } from 'src/infrastructure/data-access/typeorm/room.entity';
 import { Repository } from 'typeorm';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { RoomStatus } from '../../infrastructure/data-access/typeorm/enum';
+import {RoomUtil} from "./room.util";
 
 @Injectable()
 export class ManageRoomServiceImpl {
@@ -23,19 +24,8 @@ export class ManageRoomServiceImpl {
   async createRoom(room: RoomDetailRequestDTO, user) {
     try {
       const currentUser = await this.userService.findUserByEmail(user.email);
-      const roomModel = new RoomModel();
-      roomModel.name = room.name;
-      roomModel.address = room.address;
-      roomModel.capacity = room.capacity;
-      roomModel.description = room.description;
-      roomModel.image = room.image;
-      roomModel.isActive = room.is_active;
-      roomModel.location = `${room.location.lat},${room.location.lng}`;
-      roomModel.price = room.price;
-      roomModel.rating = room.rating;
-      roomModel.status = RoomStatus.PENDING;
+      const roomModel = RoomUtil.getRoomModel(room);
       roomModel.user = currentUser;
-
       return await this.roomRepository.save(roomModel);
     } catch (error) {
       throw new BadRequestException('error');
@@ -53,20 +43,9 @@ export class ManageRoomServiceImpl {
       throw new BadRequestException('Room does not exist!'); // TODO handle later
     }
 
-    const roomModel = new RoomModel();
-    roomModel.name = room.name || roomModel.name;
-    roomModel.address = room.address || roomModel.address;
-    roomModel.capacity = room.capacity || roomModel.capacity;
-    roomModel.description = room.description || roomModel.description;
-    roomModel.image = room.image || roomModel.image;
-    roomModel.isActive = room.is_active || roomModel.isActive;
-    roomModel.location =
-      `${room.location.lat},${room.location.lng}` || roomModel.location;
-    console.log(`roomModel.location: ${roomModel.location}`);
-    console.log(`room.location: ${room.location.lng}`);
-    roomModel.price = room.price || roomModel.price;
-    roomModel.rating = room.rating || roomModel.rating;
-    roomModel.status = RoomStatus.PENDING || roomModel.status;
+    const roomModel = RoomUtil.getRoomModel(room);
+    roomModel.roomId = room_id;
+    console.log(roomModel);
     const updateResult = await this.roomRepository.update(
       { roomId: room_id },
       { ...roomModel },
