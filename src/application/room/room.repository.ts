@@ -1,7 +1,7 @@
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { RoomModel } from '../../infrastructure/data-access/typeorm';
 import { CustomRepository } from 'src/infrastructure/data-access/typeorm-custom/typeorm-ex.decorator';
-import { QueryGetRoomByLocation, GetRoomByLocationDTO } from './dto/manage_room.dto';
+import { QueryGetRoomsByLocation, GetRoomsByLocationDTO } from './dto/manage_room.dto';
 
 @CustomRepository(RoomModel)
 export class ManageRoomRepository extends Repository<RoomModel> {
@@ -32,7 +32,7 @@ export class ManageRoomRepository extends Repository<RoomModel> {
             .getRawMany();
     }
 
-    async getRoomByLocation({ lng, lat, distance }: QueryGetRoomByLocation): Promise<GetRoomByLocationDTO[]> {
+    async getRoomsByLocations({ lng, lat, distance }: QueryGetRoomsByLocation): Promise<GetRoomsByLocationDTO[]> {
         return this.calculateDistance({ lng, lat, distance });
     }
 }

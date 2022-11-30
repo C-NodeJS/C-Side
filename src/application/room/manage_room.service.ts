@@ -4,8 +4,8 @@ import {
   RoomDetailResponseDTO,
   RoomIdParamRequestDTO,
   RoomsResponseDTO,
-  QueryGetRoomByLocation,
-  GetRoomByLocationResponseDTO,
+  QueryGetRoomsByLocation,
+  GetRoomsByLocationResponseDTO,
 } from './dto/manage_room.dto';
 import { UserServiceImpl } from '../user/user.service';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -98,9 +98,9 @@ export class ManageRoomServiceImpl {
     return true; // TODO handle later
   }
 
-  async getRoomByLocation({ lng, lat, distance }: QueryGetRoomByLocation): Promise<GetRoomByLocationResponseDTO> {
+  async getRoomsByLocation({ lng, lat, distance }: QueryGetRoomsByLocation): Promise<GetRoomsByLocationResponseDTO> {
     try {
-      const rooms = await this.manageRoomRepository.getRoomByLocation({ lng, lat, distance });
+      const rooms = await this.manageRoomRepository.getRoomsByLocations({ lng, lat, distance });
       return { rooms, count: rooms.length };
     } catch (e) {
       throw new InternalServerErrorException();

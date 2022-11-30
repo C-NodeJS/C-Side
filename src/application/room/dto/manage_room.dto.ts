@@ -119,7 +119,7 @@ export class RoomIdParamRequestDTO {
   room_id: number;
 }
 
-export class GetRoomByLocationDTO {
+export class GetRoomsByLocationDTO {
   name: string;
   address: string;
   capacity: number;
@@ -134,12 +134,12 @@ export class GetRoomByLocationDTO {
   distance: number;
 }
 
-export class GetRoomByLocationResponseDTO {
-  rooms: GetRoomByLocationDTO[];
+export class GetRoomsByLocationResponseDTO {
+  rooms: GetRoomsByLocationDTO[];
   count: number;
 }
 
-export class QueryGetRoomByLocation {
+export class QueryGetRoomsByLocation {
   @ApiProperty()
   @Type(() => Number)
   @IsNumber()

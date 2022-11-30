@@ -4,7 +4,7 @@ import {
   GetRoomQueryDTO,
   RoomDetailRequestDTO,
   RoomIdParamRequestDTO,
-  QueryGetRoomByLocation,
+  QueryGetRoomsByLocation,
 } from './dto/manage_room.dto';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import {
@@ -24,8 +24,8 @@ import { ManageRoomServiceImpl } from './manage_room.service';
 import { HttpPresenter } from '../http-presenters';
 
 @ApiTags('rooms')
-// @ApiBearerAuth()
-// @UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('/rooms')
 export class RoomController {
   constructor(private roomsService: ManageRoomServiceImpl) {}
@@ -114,13 +114,13 @@ export class RoomController {
 
   @Get('/location/find')
   @ApiOkResponse({ description: 'Success!' })
-  async getRoomByLocation(
+  async getRoomsByLocation(
     @Res() response: Response,
-    @Query() { lng, lat, distance = 10 }: QueryGetRoomByLocation,
+    @Query() { lng, lat, distance = 10 }: QueryGetRoomsByLocation,
   ) {
     const httpPresenter = new HttpPresenter(response);
     return httpPresenter
-      .accept(await this.roomsService.getRoomByLocation({ lng, lat, distance }))
+      .accept(await this.roomsService.getRoomsByLocation({ lng, lat, distance }))
       .render();
   }
 }
