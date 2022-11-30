@@ -23,23 +23,19 @@ export class ManageRoomServiceImpl {
   async createRoom(Room: CreateRoomRequestDTO, user) {
     try {
       const userId = await this.userService.findUserByEmail(user.email);
-      const RoomS = new RoomModel();
-      RoomS.name = Room.name;
-      RoomS.capacity = Room.capacity;
-      RoomS.price = Room.price;
-      RoomS.status = Room.status;
-      RoomS.description = Room.description;
-      RoomS.image = Room.image;
-      RoomS.rating = Room.rating;
-      RoomS.user = new UserModel();
-      RoomS.address = Room.address;
-      RoomS.user.userId = userId?.userId;
-      RoomS.location = `${Room?.location?.lat},${Room?.location?.lng}`;
-      const room = await this.roomRepository.create(RoomS);
+      const room = new RoomModel();
+      room.name = Room.name;
+      room.capacity = Room.capacity;
+      room.price = Room.price;
+      room.status = Room.status;
+      room.description = Room.description;
+      room.image = Room.image;
+      room.rating = Room.rating;
+      room.address = Room.address;
+      room.user = userId;
+      room.location = `${Room?.location?.lat},${Room?.location?.lng}`;
       return await this.roomRepository.save(room);
     } catch (error) {
-      console.log(error);
-
       throw new BadRequestException('error');
     }
   }
@@ -62,6 +58,7 @@ export class ManageRoomServiceImpl {
     room.image = Room.image;
     room.rating = Room.rating;
     room.isActive = Room.is_active;
+    room.location = `${Room?.location?.lat},${Room?.location?.lng}`;
     const data = await this.roomRepository.save(room);
     return data;
   }
