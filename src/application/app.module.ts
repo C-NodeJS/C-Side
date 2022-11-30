@@ -7,7 +7,6 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { RoomModule } from './room/room.module';
 import { CaslModule } from './casl/casl.module';
-import {ApiTags} from "@nestjs/swagger";
 
 @Module({
   imports: [

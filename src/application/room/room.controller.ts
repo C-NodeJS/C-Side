@@ -1,24 +1,24 @@
 import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
 import { User } from './admin.decorator';
 import {
-  RoomDetailResponseDTO,
-  RoomsResponseDTO,
-  RoomDetailRequestDTO,
-  RoomIdParamRequestDTO,
   GetRoomQueryDTO,
+  RoomDetailRequestDTO,
+  RoomDetailResponseDTO,
+  RoomIdParamRequestDTO,
+  RoomsResponseDTO,
 } from './dto/manage_room.dto';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import {
   Body,
-  UseGuards,
   Controller,
-  Post,
-  Res,
+  Delete,
   Get,
   Param,
+  Post,
   Put,
-  Delete,
   Query,
+  Res,
+  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ManageRoomServiceImpl } from './manage_room.service';
@@ -58,8 +58,7 @@ export class RoomController {
   @ApiOkResponse({ description: 'Success!' })
   async updateRoom(
     @Res() response: Response,
-    @Body()
-    room: RoomDetailRequestDTO,
+    @Body() room: RoomDetailRequestDTO,
     @Param() { room_id }: RoomIdParamRequestDTO,
   ) {
     const httpPresenter = new HttpPresenter(response);

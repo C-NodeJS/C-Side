@@ -45,12 +45,10 @@ export class ManageRoomServiceImpl {
 
     const roomModel = RoomUtil.getRoomModel(room);
     roomModel.roomId = room_id;
-    console.log(roomModel);
     const updateResult = await this.roomRepository.update(
       { roomId: room_id },
       { ...roomModel },
     );
-    console.log(updateResult);
     return true;
   }
 
@@ -60,12 +58,11 @@ export class ManageRoomServiceImpl {
   ): Promise<RoomsResponseDTO> {
     const pageSize = getRoomQueryDTO.pageSize || 20;
     const pageNumber = getRoomQueryDTO.pageNumber || 1;
-    const take = pageSize;
     const userId = await this.userService.findUserByEmail(user.email);
     const skip = (pageNumber || 1 - 1) * pageSize;
     const [data, total] = await this.roomRepository.findAndCount({
       where: { user: { userId: userId.userId } },
-      take,
+      take: pageSize,
       skip,
     });
 
