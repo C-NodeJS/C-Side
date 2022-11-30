@@ -1,11 +1,9 @@
-import { JwtAuthGuard } from './../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { User } from './admin.decorator';
 import {
   GetRoomQueryDTO,
   RoomDetailRequestDTO,
-  RoomDetailResponseDTO,
   RoomIdParamRequestDTO,
-  RoomsResponseDTO,
 } from './dto/manage_room.dto';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import {
@@ -34,24 +32,50 @@ export class RoomController {
   @Get()
   @ApiOkResponse({ description: 'Success!' })
   async getAllRoom(
+    @Res() response: Response,
     @Query() getRoomsQueryDTO: GetRoomQueryDTO,
     @User() user,
-  ): Promise<RoomsResponseDTO> {
-    return await this.roomsService.getAllRoom(getRoomsQueryDTO, user);
+  ): Promise<any> {
+    const httpPresenter = new HttpPresenter(response);
+    try {
+      httpPresenter.accept(
+        await this.roomsService.getAllRoom(getRoomsQueryDTO, user),
+      );
+    } catch (e) {
+      httpPresenter.reject(e);
+    }
+    httpPresenter.render();
   }
 
   @Get('/:room_id')
   @ApiOkResponse({ description: 'Success!' })
   async getRoomDetail(
+    @Res() response: Response,
     @Param() roomId: RoomIdParamRequestDTO,
-  ): Promise<RoomDetailResponseDTO> {
-    return await this.roomsService.getRoomDetail(roomId);
+  ): Promise<any> {
+    const httpPresenter = new HttpPresenter(response);
+    try {
+      httpPresenter.accept(await this.roomsService.getRoomDetail(roomId));
+    } catch (e) {
+      httpPresenter.reject(e);
+    }
+    httpPresenter.render();
   }
 
   @Post('/create')
   @ApiOkResponse({ description: 'Success!' })
-  async createRoom(@Body() room: RoomDetailRequestDTO, @User() user) {
-    return await this.roomsService.createRoom(room, user);
+  async createRoom(
+    @Body() room: RoomDetailRequestDTO,
+    @User() user,
+    @Res() response: Response,
+  ) {
+    const httpPresenter = new HttpPresenter(response);
+    try {
+      httpPresenter.accept(await this.roomsService.createRoom(room, user));
+    } catch (e) {
+      httpPresenter.reject(e);
+    }
+    httpPresenter.render();
   }
 
   @Put('/:room_id')
@@ -62,9 +86,14 @@ export class RoomController {
     @Param() { room_id }: RoomIdParamRequestDTO,
   ) {
     const httpPresenter = new HttpPresenter(response);
-    return httpPresenter
-      .accept(await this.roomsService.updateRoom(room, { room_id }))
-      .render();
+    try {
+      httpPresenter.accept(
+        await this.roomsService.updateRoom(room, { room_id }),
+      );
+    } catch (e) {
+      httpPresenter.reject(e);
+    }
+    httpPresenter.render();
   }
 
   @Delete('/:room_id')
@@ -74,8 +103,11 @@ export class RoomController {
     @Param() room_id: RoomIdParamRequestDTO,
   ) {
     const httpPresenter = new HttpPresenter(response);
-    return httpPresenter
-      .accept(await this.roomsService.removeRoom(room_id))
-      .render();
+    try {
+      httpPresenter.accept(await this.roomsService.removeRoom(room_id));
+    } catch (e) {
+      httpPresenter.accept(await this.roomsService.removeRoom(room_id));
+    }
+    httpPresenter.render();
   }
 }

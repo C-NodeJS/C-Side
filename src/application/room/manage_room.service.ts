@@ -11,7 +11,7 @@ import { RoomModel } from 'src/infrastructure/data-access/typeorm/room.entity';
 import { Repository } from 'typeorm';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { RoomStatus } from '../../infrastructure/data-access/typeorm/enum';
-import { RoomUtil } from "./room.util";
+import { RoomUtil } from './room.util';
 
 @Injectable()
 export class ManageRoomServiceImpl {
@@ -45,23 +45,21 @@ export class ManageRoomServiceImpl {
 
     const roomModel = RoomUtil.getRoomModel(room);
     roomModel.roomId = room_id;
-    const updateResult = await this.roomRepository.update(
-      { roomId: room_id },
-      { ...roomModel },
-    );
+    await this.roomRepository.update({ roomId: room_id }, { ...roomModel });
     return true;
   }
 
   async getAllRoom(
-    getRoomQueryDTO: GetRoomQueryDTO,
+    { pageSize = 20, pageNumber = 1 }: GetRoomQueryDTO,
     user,
   ): Promise<RoomsResponseDTO> {
-    const pageSize = getRoomQueryDTO.pageSize || 20;
-    const pageNumber = getRoomQueryDTO.pageNumber || 1;
-    const userId = await this.userService.findUserByEmail(user.email);
+    const currentUser = await this.userService.findUserByEmail(user.email);
+    if (!currentUser) {
+      throw new BadRequestException('Somethings wrong happened!'); // TODO handle later
+    }
     const skip = (pageNumber || 1 - 1) * pageSize;
     const [data, total] = await this.roomRepository.findAndCount({
-      where: { user: { userId: userId.userId } },
+      where: { user: { userId: currentUser.userId } },
       take: pageSize,
       skip,
     });
