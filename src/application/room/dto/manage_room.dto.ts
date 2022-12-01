@@ -130,7 +130,7 @@ export class GetRoomsByLocationDTO {
   image: string;
   rating?: number;
   is_active: boolean;
-  owner: string;
+  owner: number;
   distance: number;
 }
 
