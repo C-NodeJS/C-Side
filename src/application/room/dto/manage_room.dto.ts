@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEnum, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { RoomStatus } from 'src/infrastructure/data-access/typeorm/enum';
 import { RoomModel } from '../../../infrastructure/data-access/typeorm/room.entity';
@@ -117,4 +117,44 @@ export class RoomsResponseDTO {
 export class RoomIdParamRequestDTO {
   @ApiProperty()
   room_id: number;
+}
+
+export class GetRoomsByLocationDTO {
+  name: string;
+  address: string;
+  capacity: number;
+  price: number;
+  location: object;
+  status: RoomStatus;
+  description?: string;
+  image: string;
+  rating?: number;
+  is_active: boolean;
+  owner: number;
+  distance: number;
+}
+
+export class GetRoomsByLocationResponseDTO {
+  rooms: GetRoomsByLocationDTO[];
+  count: number;
+}
+
+export class QueryGetRoomsByLocation {
+  @ApiProperty()
+  @Type(() => Number)
+  @IsNumber()
+  lng: number;
+
+  @ApiProperty()
+  @Type(() => Number)
+  @IsNumber()
+  lat: number;
+
+  @ApiProperty({
+    required: false,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  distance?: number = 10;
 }

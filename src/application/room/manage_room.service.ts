@@ -4,18 +4,21 @@ import {
   RoomDetailResponseDTO,
   RoomIdParamRequestDTO,
   RoomsResponseDTO,
+  QueryGetRoomsByLocation,
+  GetRoomsByLocationResponseDTO,
 } from './dto/manage_room.dto';
 import { UserServiceImpl } from '../user/user.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RoomModel } from 'src/infrastructure/data-access/typeorm/room.entity';
 import { Repository } from 'typeorm';
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { RoomStatus } from '../../infrastructure/data-access/typeorm/enum';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { RoomUtil } from './room.util';
+import { ManageRoomRepository } from './room.repository';
 
 @Injectable()
 export class ManageRoomServiceImpl {
   constructor(
+    private readonly manageRoomRepository: ManageRoomRepository,
     private readonly userService: UserServiceImpl,
     @InjectRepository(RoomModel)
     private roomRepository: Repository<RoomModel>,
@@ -93,5 +96,14 @@ export class ManageRoomServiceImpl {
     }
     await this.roomRepository.remove(room, {});
     return true; // TODO handle later
+  }
+
+  async getRoomsByLocation({ lng, lat, distance }: QueryGetRoomsByLocation): Promise<GetRoomsByLocationResponseDTO> {
+    try {
+      const rooms = await this.manageRoomRepository.getRoomsByLocation({ lng, lat, distance });
+      return { rooms, count: rooms.length };
+    } catch (e) {
+      throw new InternalServerErrorException();
+    }
   }
 }
