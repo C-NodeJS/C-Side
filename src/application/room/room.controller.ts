@@ -24,8 +24,8 @@ import { ManageRoomServiceImpl } from './manage_room.service';
 import { HttpPresenter } from '../http-presenters';
 
 @ApiTags('rooms')
-@ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+// @ApiBearerAuth()
+// @UseGuards(JwtAuthGuard)
 @Controller('/rooms')
 export class RoomController {
   constructor(private roomsService: ManageRoomServiceImpl) {}
