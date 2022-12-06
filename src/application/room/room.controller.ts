@@ -145,6 +145,7 @@ export class RoomController {
     @Query() { pageSize, pageNumber }: GetRoomQueryDTO,
   ) {
     const httpPresenter = new HttpPresenter(response);
+    
     return httpPresenter
       .accept(await this.roomsService.getPendingRooms({ pageSize, pageNumber }))
       .render();

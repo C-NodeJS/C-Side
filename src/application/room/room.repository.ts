@@ -57,7 +57,6 @@ export class ManageRoomRepository extends Repository<RoomModel> {
 
     getManyRooms({ pageNumber, pageSize }) {
         const { alias } = this;
-
         const skip = (pageNumber - 1) * pageSize;
 
         return this.createBuilder()

@@ -124,6 +124,7 @@ export class ManageRoomServiceImpl {
     try {
       const rooms = await this.manageRoomRepository.getManyRooms({ pageNumber, pageSize });
       return { rooms, count: rooms.length };
+    
     } catch (e) {
       throw new InternalServerErrorException();
     }
