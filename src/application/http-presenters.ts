@@ -1,5 +1,5 @@
-import { HttpException, HttpStatus } from "@nestjs/common";
-import { IOutputBoundary } from "../domain/core/interfaces/output-boundary";
+import { HttpException, HttpStatus } from '@nestjs/common';
+import { IOutputBoundary } from '../domain/core/interfaces/output-boundary';
 
 //Packages
 import { Response } from 'express';
@@ -17,12 +17,12 @@ export class HttpPresenter<S extends IResponse, E extends HttpException> impleme
   private data: S;
   private error: E;
 
-  constructor(private response : Response) {}
+  constructor(private response: Response) { }
 
   accept(
     data: S,
     status: HttpStatus = HttpStatus.OK,
-    message: string = "Success!"
+    message: string = 'Success!'
   ): this {
     this.status = status;
     this.data = data;
@@ -38,7 +38,7 @@ export class HttpPresenter<S extends IResponse, E extends HttpException> impleme
   }
 
   render(): void {
-    if(this.error)
+    if (this.error)
       this.response.json({
         statusCode: this.status,
         message: this.message,

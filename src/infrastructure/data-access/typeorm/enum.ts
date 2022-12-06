@@ -4,3 +4,8 @@ export enum RoomStatus {
   PENDING = 'pending',
   MAINTAIN = 'maintain',
 }
+
+export enum RoomStatus {
+  APPROVE = 'approve',
+  REJECT = 'reject',
+}
