@@ -6,7 +6,7 @@ import { ObjectModel } from 'src/infrastructure/data-access/typeorm/object.entit
 import { PermissionModel } from 'src/infrastructure/data-access/typeorm/permission.entity';
 import { PermissionAction } from './casl/action.constant';
 import { StatusModel } from 'src/infrastructure/data-access/typeorm';
-import { RoomStatus } from 'src/infrastructure/data-access/typeorm/enum';
+import { RoomApprovalStatus } from 'src/infrastructure/data-access/typeorm/enum';
 
 @Injectable()
 export class AppService {
@@ -128,11 +128,11 @@ export class AppService {
       //Add Room Approval Status
       const cbs_approve = new StatusModel();
       cbs_approve.id = 1;
-      cbs_approve.statusName = RoomStatus.APPROVE;
+      cbs_approve.statusName = RoomApprovalStatus.APPROVE;
 
       const cbs_reject = new StatusModel();
       cbs_reject.id = 2;
-      cbs_reject.statusName = RoomStatus.REJECT;
+      cbs_reject.statusName = RoomApprovalStatus.REJECT;
       
       await Promise.all([
         this.entityManager.save(cbs_approve),

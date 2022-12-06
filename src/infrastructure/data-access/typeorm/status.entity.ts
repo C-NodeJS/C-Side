@@ -4,7 +4,7 @@ import {
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { RoomModel } from '.';
-import { RoomStatus } from './enum';
+import { RoomApprovalStatus } from './enum';
 
 @Entity({ name: 'status' })
 export class StatusModel {
@@ -14,7 +14,7 @@ export class StatusModel {
     @Column({
         name: 'status_name',
         type: 'enum',
-        enum: RoomStatus,
+        enum: RoomApprovalStatus,
     })
     statusName: string;
 
