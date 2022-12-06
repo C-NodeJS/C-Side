@@ -137,4 +137,17 @@ export class RoomController {
       .accept(await this.roomsService.roomApproval(room_id, { status_id, reason }))
       .render();
   }
+
+  @Get('/find/pending-rooms')
+  @ApiOkResponse({ description: 'Success!' })
+  async getPendingRooms(
+    @Res() response: Response,
+    @Query() { pageSize, pageNumber }: GetRoomQueryDTO,
+  ) {
+    const httpPresenter = new HttpPresenter(response);
+    
+    return httpPresenter
+      .accept(await this.roomsService.getPendingRooms({ pageSize, pageNumber }))
+      .render();
+  }
 }

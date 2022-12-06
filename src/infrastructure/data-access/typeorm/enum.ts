@@ -5,7 +5,7 @@ export enum RoomStatus {
   MAINTAIN = 'maintain',
 }
 
-export enum RoomStatus {
+export enum RoomApprovalStatus {
   APPROVE = 'approve',
   REJECT = 'reject',
 }
