@@ -123,8 +123,8 @@ export class ManageRoomServiceImpl {
   async getPendingRooms({ pageSize, pageNumber }: GetRoomQueryDTO): Promise<any> {
     try {
       const rooms = await this.manageRoomRepository.getManyRooms({ pageNumber, pageSize });
+      
       return { rooms, count: rooms.length };
-    
     } catch (e) {
       throw new InternalServerErrorException();
     }
