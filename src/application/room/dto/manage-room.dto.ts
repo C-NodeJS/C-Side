@@ -161,7 +161,7 @@ export class QueryGetRoomsByLocation {
   distance?: number = 10;
 }
 
-export class ConfirmationBookingDTO {
+export class RoomApprovalDTO {
   @ApiProperty()
   @Type(() => Number)
   @IsNumber()

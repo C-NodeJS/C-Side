@@ -5,7 +5,7 @@ export enum RoomStatus {
   MAINTAIN = 'maintain',
 }
 
-export enum ConfirmationBookingStatus {
+export enum RoomStatus {
   APPROVE = 'approve',
   REJECT = 'reject',
 }

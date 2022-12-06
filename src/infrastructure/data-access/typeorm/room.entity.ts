@@ -75,5 +75,5 @@ export class RoomModel {
 
   @OneToMany(() => StatusModel, (status) => status.room)
   @JoinColumn({ name: 'status_id' })
-  confirmationBookingStatuses?: StatusModel[];
+  roomStatus?: StatusModel[];
 }

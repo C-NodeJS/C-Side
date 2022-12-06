@@ -6,7 +6,7 @@ import {
   RoomsResponseDTO,
   QueryGetRoomsByLocation,
   GetRoomsByLocationResponseDTO,
-  ConfirmationBookingDTO,
+  RoomApprovalDTO,
 } from './dto/manage-room.dto';
 import { UserServiceImpl } from '../user/user.service';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -110,7 +110,7 @@ export class ManageRoomServiceImpl {
     }
   }
 
-  async roomApprove({ room_id }, { status_id, reason }: ConfirmationBookingDTO): Promise<RoomDetailResponseDTO> {
+  async roomApproval({ room_id }, { status_id, reason }: RoomApprovalDTO): Promise<RoomDetailResponseDTO> {
     const oldRoom = await this.roomRepository.findOneBy({
       roomId: room_id,
       status: RoomStatus.PENDING,
