@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager, getMetadataArgsStorage } from 'typeorm';
 import { UserModel } from 'src/infrastructure/data-access/typeorm/user.entity';
 import { RoleModel } from 'src/infrastructure/data-access/typeorm/role.entity';
-import { RoomModel } from 'src/infrastructure/data-access/typeorm/room.entity';
 import { ObjectModel } from 'src/infrastructure/data-access/typeorm/object.entity';
 import { PermissionModel } from 'src/infrastructure/data-access/typeorm/permission.entity';
 import { PermissionAction } from './casl/action.constant';
+import { StatusModel } from 'src/infrastructure/data-access/typeorm';
+import { ConfirmationBookingStatus } from 'src/infrastructure/data-access/typeorm/enum';
 
 @Injectable()
 export class AppService {
@@ -123,6 +124,20 @@ export class AppService {
       ucl.role = rcl;
       ucl.roleId = rcl.id;
       await this.entityManager.save(ucl);
+
+      //Add Confirmation Booking Status
+      const cbs_approve = new StatusModel();
+      cbs_approve.id = 1;
+      cbs_approve.statusName = ConfirmationBookingStatus.APPROVE;
+
+      const cbs_reject = new StatusModel();
+      cbs_reject.id = 2;
+      cbs_reject.statusName = ConfirmationBookingStatus.REJECT;
+      
+      await Promise.all([
+        this.entityManager.save(cbs_approve),
+        this.entityManager.save(cbs_reject),
+      ]);
 
       return 'init data success';
     } catch (err) {

@@ -5,7 +5,8 @@ import {
   RoomDetailRequestDTO,
   RoomIdParamRequestDTO,
   QueryGetRoomsByLocation,
-} from './dto/manage_room.dto';
+  ConfirmationBookingDTO,
+} from './dto/manage-room.dto';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import {
   Body,
@@ -20,7 +21,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { ManageRoomServiceImpl } from './manage_room.service';
+import { ManageRoomServiceImpl } from './manage-room.service';
 import { HttpPresenter } from '../http-presenters';
 
 @ApiTags('rooms')
@@ -121,6 +122,19 @@ export class RoomController {
     const httpPresenter = new HttpPresenter(response);
     return httpPresenter
       .accept(await this.roomsService.getRoomsByLocation({ lng, lat, distance }))
+      .render();
+  }
+
+  @Put('/change-status/:room_id')
+  @ApiOkResponse({ description: 'Success!' })
+  async confirmationBooking(
+    @Res() response: Response,
+    @Param() room_id: RoomIdParamRequestDTO,
+    @Body() { status_id, reason }: ConfirmationBookingDTO,
+  ) {
+    const httpPresenter = new HttpPresenter(response);
+    return httpPresenter
+      .accept(await this.roomsService.confirmationBooking(room_id, { status_id, reason }))
       .render();
   }
 }

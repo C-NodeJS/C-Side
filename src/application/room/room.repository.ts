@@ -1,7 +1,7 @@
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { RoomModel } from '../../infrastructure/data-access/typeorm';
 import { CustomRepository } from 'src/infrastructure/data-access/typeorm-custom/typeorm-ex.decorator';
-import { QueryGetRoomsByLocation, GetRoomsByLocationDTO } from './dto/manage_room.dto';
+import { QueryGetRoomsByLocation, GetRoomsByLocationDTO, RoomDetailResponseDTO } from './dto/manage-room.dto';
 
 @CustomRepository(RoomModel)
 export class ManageRoomRepository extends Repository<RoomModel> {
@@ -32,7 +32,26 @@ export class ManageRoomRepository extends Repository<RoomModel> {
             .getRawMany();
     }
 
-    async getRoomsByLocation({ lng, lat, distance }: QueryGetRoomsByLocation): Promise<GetRoomsByLocationDTO[]> {
+    private async findOneAndUpdateByRoomId({ status_id, room_id }) {
+        const room = await this.createBuilder()
+            .update(RoomModel)
+            .set({ statusId: status_id })
+            .where('room_id = :room_id', { room_id })
+            .returning('*')
+            .execute()
+            .then((res) => {
+                return res.raw[0];
+            });
+
+        return { room };
+    }
+
+    getRoomsByLocation({ lng, lat, distance }: QueryGetRoomsByLocation): Promise<GetRoomsByLocationDTO[]> {
         return this.calculateDistance({ lng, lat, distance });
     }
+
+    getRoomAndUpdate({ status_id, room_id }: any): Promise<any> {
+        return this.findOneAndUpdateByRoomId({ status_id, room_id });
+    }
+
 }

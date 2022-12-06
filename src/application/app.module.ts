@@ -24,7 +24,7 @@ import { CaslModule } from './casl/casl.module';
         username: configService.get('DB_USER_NAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
-        entities: [`${__dirname}/../**/*.entities.js`],
+        entities: [`${__dirname}/../**/*.entity{.ts,.js}`],
         synchronize: true,
         autoLoadEntities: true,
       }),

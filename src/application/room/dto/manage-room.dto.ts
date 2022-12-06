@@ -93,6 +93,7 @@ export class RoomDetailResponseDTO {
   image?: string;
   rating?: number;
   is_active: boolean;
+  status_id?: number;
 
   constructor(roomModel: RoomModel) {
     this.roomId = roomModel.roomId;
@@ -106,6 +107,7 @@ export class RoomDetailResponseDTO {
     this.price = roomModel.price;
     this.rating = roomModel.rating;
     this.status = roomModel.status;
+    this.status_id = roomModel.statusId;
   }
 }
 
@@ -157,4 +159,18 @@ export class QueryGetRoomsByLocation {
   @Type(() => Number)
   @IsNumber()
   distance?: number = 10;
+}
+
+export class ConfirmationBookingDTO {
+  @ApiProperty()
+  @Type(() => Number)
+  @IsNumber()
+  status_id: number;
+
+  @ApiProperty({
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  reason?: string;
 }

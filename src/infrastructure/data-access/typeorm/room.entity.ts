@@ -3,9 +3,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { RoomStatus } from './enum';
+import { StatusModel } from './status.entity';
 import { UserModel } from './user.entity';
 
 @Entity({ name: 'rooms' })
@@ -61,7 +63,17 @@ export class RoomModel {
   })
   isActive: boolean;
 
+  @Column({
+    name: 'status_id',
+    nullable: true,
+  })
+  statusId: number;
+
   @ManyToOne(() => UserModel, (user) => user.rooms)
   @JoinColumn({ name: 'owner' })
   user?: UserModel;
+
+  @OneToMany(() => StatusModel, (status) => status.room)
+  @JoinColumn({ name: 'status_id' })
+  confirmationBookingStatuses?: StatusModel[];
 }

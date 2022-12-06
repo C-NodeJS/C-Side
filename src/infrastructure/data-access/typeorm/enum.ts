@@ -4,3 +4,8 @@ export enum RoomStatus {
   PENDING = 'pending',
   MAINTAIN = 'maintain',
 }
+
+export enum ConfirmationBookingStatus {
+  APPROVE = 'approve',
+  REJECT = 'reject',
+}
