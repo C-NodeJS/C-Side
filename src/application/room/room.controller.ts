@@ -127,14 +127,14 @@ export class RoomController {
 
   @Put('/change-status/:room_id')
   @ApiOkResponse({ description: 'Success!' })
-  async confirmationBooking(
+  async roomApprove(
     @Res() response: Response,
     @Param() room_id: RoomIdParamRequestDTO,
     @Body() { status_id, reason }: ConfirmationBookingDTO,
   ) {
     const httpPresenter = new HttpPresenter(response);
     return httpPresenter
-      .accept(await this.roomsService.confirmationBooking(room_id, { status_id, reason }))
+      .accept(await this.roomsService.roomApprove(room_id, { status_id, reason }))
       .render();
   }
 }

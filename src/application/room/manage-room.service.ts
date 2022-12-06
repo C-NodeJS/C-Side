@@ -16,6 +16,7 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import { RoomUtil } from './room.util';
 import { ManageRoomRepository } from './room.repository';
 import { RoomDoesNotExists } from 'src/infrastructure/data-access/constants/status.constants';
+import { RoomStatus } from 'src/infrastructure/data-access/typeorm/enum';
 
 @Injectable()
 export class ManageRoomServiceImpl {
@@ -109,17 +110,13 @@ export class ManageRoomServiceImpl {
     }
   }
 
-  async confirmationBooking({ room_id }, { status_id, reason }: ConfirmationBookingDTO): Promise<RoomDetailResponseDTO> {
-    try {
-      const oldRoom = await this.roomRepository.findOneBy({
-        roomId: room_id,
-      });
+  async roomApprove({ room_id }, { status_id, reason }: ConfirmationBookingDTO): Promise<RoomDetailResponseDTO> {
+    const oldRoom = await this.roomRepository.findOneBy({
+      roomId: room_id,
+      status: RoomStatus.PENDING,
+    });
 
-      if (!oldRoom) throw new RoomDoesNotExists();
-
-      return this.manageRoomRepository.getRoomAndUpdate({ status_id, room_id });
-    } catch (e) {
-      throw new InternalServerErrorException();
-    }
+    if (!oldRoom) throw new RoomDoesNotExists();
+    return this.manageRoomRepository.getRoomAndUpdate({ status_id, room_id });
   }
 }
