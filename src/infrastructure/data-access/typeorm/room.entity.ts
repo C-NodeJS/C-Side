@@ -69,6 +69,11 @@ export class RoomModel {
   })
   statusId: number;
 
+  @Column({
+    name: 'user_id',
+  })
+  userId: number;
+
   @ManyToOne(() => UserModel, (user) => user.rooms)
   @JoinColumn({ name: 'owner' })
   user?: UserModel;

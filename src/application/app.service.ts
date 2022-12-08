@@ -68,25 +68,33 @@ export class AppService {
       const permission3 = new PermissionModel();
       permission3.id = 3;
       permission3.roles = rha;
-      permission3.action = PermissionAction.MANAGE;
-      permission3.condition = JSON.stringify({ owner: 'id' });
+      permission3.action = PermissionAction.UPDATE;
+      permission3.condition = JSON.stringify({ userId: 'userId' });
       permission3.objectId = objRoom.id;
       permission3.object = objRoom;
       await this.entityManager.save(permission3);
 
-      // Client can read Room
       const permission4 = new PermissionModel();
       permission4.id = 4;
-      permission4.roles = rcl;
-      permission4.action = PermissionAction.READ;
+      permission4.roles = rha;
+      permission4.action = PermissionAction.CREATE;
       permission4.objectId = objRoom.id;
       permission4.object = objRoom;
       await this.entityManager.save(permission4);
 
+      // Client can read Room
+      const permission5 = new PermissionModel();
+      permission5.id = 5;
+      permission5.roles = rcl;
+      permission5.action = PermissionAction.READ;
+      permission5.objectId = objRoom.id;
+      permission5.object = objRoom;
+      await this.entityManager.save(permission5);
+
       //Save Role Permission
       rsa.permissions = [permission1, permission2];
-      rha.permissions = [permission3];
-      rcl.permissions = [permission4];
+      rha.permissions = [permission3, permission4];
+      rcl.permissions = [permission5];
       await Promise.all([
         this.entityManager.save(rsa),
         this.entityManager.save(rha),
@@ -98,8 +106,7 @@ export class AppService {
       usa.name = 'System Admin';
       usa.userName = 'admin';
       usa.email = 'admin@cside.com';
-      usa.password =
-        '$2y$10$OHU7ObPm1yj/szOyCCy0EuiooQVCGqAuuVzZkHHRDzG.8eUhWlwLS';
+      usa.password = '123';
       usa.role = rsa;
       usa.roleId = rsa.id;
       await this.entityManager.save(usa);
@@ -109,8 +116,7 @@ export class AppService {
       uha.name = 'Host';
       uha.userName = 'host';
       uha.email = 'host@cside.com';
-      uha.password =
-        '$2y$10$OHU7ObPm1yj/szOyCCy0EuiooQVCGqAuuVzZkHHRDzG.8eUhWlwLS';
+      uha.password = '123';
       uha.role = rha;
       uha.roleId = rha.id;
       await this.entityManager.save(uha);
@@ -119,8 +125,7 @@ export class AppService {
       ucl.name = 'Client';
       ucl.userName = 'client';
       ucl.email = 'client@cside.com';
-      ucl.password =
-        '$2y$10$OHU7ObPm1yj/szOyCCy0EuiooQVCGqAuuVzZkHHRDzG.8eUhWlwLS';
+      ucl.password = '123';
       ucl.role = rcl;
       ucl.roleId = rcl.id;
       await this.entityManager.save(ucl);
@@ -133,7 +138,7 @@ export class AppService {
       const cbs_reject = new StatusModel();
       cbs_reject.id = 2;
       cbs_reject.statusName = RoomStatus.REJECT;
-      
+
       await Promise.all([
         this.entityManager.save(cbs_approve),
         this.entityManager.save(cbs_reject),

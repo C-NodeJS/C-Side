@@ -12,11 +12,16 @@ import { UserServiceImpl } from '../user/user.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RoomModel } from 'src/infrastructure/data-access/typeorm/room.entity';
 import { Repository } from 'typeorm';
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { RoomUtil } from './room.util';
 import { ManageRoomRepository } from './room.repository';
 import { RoomDoesNotExists } from 'src/infrastructure/data-access/constants/status.constants';
 import { RoomStatus } from 'src/infrastructure/data-access/typeorm/enum';
+import { UserModel } from 'src/infrastructure/data-access/typeorm';
 
 @Injectable()
 export class ManageRoomServiceImpl {
@@ -25,15 +30,19 @@ export class ManageRoomServiceImpl {
     private readonly userService: UserServiceImpl,
     @InjectRepository(RoomModel)
     private roomRepository: Repository<RoomModel>,
-  ) { }
+  ) {}
 
   async createRoom(room: RoomDetailRequestDTO, user) {
     try {
       const currentUser = await this.userService.findUserByEmail(user.email);
       const roomModel = RoomUtil.getRoomModel(room);
       roomModel.user = currentUser;
-      return await this.roomRepository.save(roomModel);
+      roomModel.userId = currentUser.userId;
+      const roomResponse = await this.roomRepository.save(roomModel);
+      // console.log(roomResponse.);
+      return roomResponse;
     } catch (error) {
+      console.log(error);
       throw new BadRequestException('error');
     }
   }
@@ -41,11 +50,14 @@ export class ManageRoomServiceImpl {
   async updateRoom(
     room: RoomDetailRequestDTO,
     { room_id }: RoomIdParamRequestDTO,
+    user: Partial<UserModel>,
   ): Promise<boolean> {
-    const oldRoom = await this.roomRepository.findOneBy({
+    const currentUser = await this.userService.findUserByEmail(user.email);
+    const oldRoom = await this.getRoomByUser(currentUser, {
       roomId: room_id,
     });
-    if (!oldRoom) {
+
+    if (oldRoom.length === 0) {
       throw new BadRequestException('Room does not exist!'); // TODO handle later
     }
 
@@ -90,27 +102,43 @@ export class ManageRoomServiceImpl {
     return new RoomDetailResponseDTO(data);
   }
 
-  async removeRoom({ room_id }: RoomIdParamRequestDTO): Promise<boolean> {
-    const room = await this.roomRepository.findOneBy({
+  async removeRoom(
+    { room_id }: RoomIdParamRequestDTO,
+    user: Partial<UserModel>,
+  ): Promise<boolean> {
+    const currentUser = await this.userService.findUserByEmail(user.email);
+    const room = await this.getRoomByUser(currentUser, {
       roomId: room_id,
     });
-    if (!room) {
-      throw new BadRequestException('data not found');
+
+    if (room.length === 0) {
+      throw new BadRequestException('Room does not exist!'); // TODO handle later
     }
-    await this.roomRepository.remove(room, {});
+    await this.roomRepository.remove(room[0], {});
     return true; // TODO handle later
   }
 
-  async getRoomsByLocation({ lng, lat, distance }: QueryGetRoomsByLocation): Promise<GetRoomsByLocationResponseDTO> {
+  async getRoomsByLocation({
+    lng,
+    lat,
+    distance,
+  }: QueryGetRoomsByLocation): Promise<GetRoomsByLocationResponseDTO> {
     try {
-      const rooms = await this.manageRoomRepository.getRoomsByLocation({ lng, lat, distance });
+      const rooms = await this.manageRoomRepository.getRoomsByLocation({
+        lng,
+        lat,
+        distance,
+      });
       return { rooms, count: rooms.length };
     } catch (e) {
       throw new InternalServerErrorException();
     }
   }
 
-  async roomApproval({ room_id }, { status_id, reason }: RoomApprovalDTO): Promise<RoomDetailResponseDTO> {
+  async roomApproval(
+    { room_id },
+    { status_id, reason }: RoomApprovalDTO,
+  ): Promise<RoomDetailResponseDTO> {
     const oldRoom = await this.roomRepository.findOneBy({
       roomId: room_id,
       status: RoomStatus.PENDING,
@@ -118,5 +146,18 @@ export class ManageRoomServiceImpl {
 
     if (!oldRoom) throw new RoomDoesNotExists();
     return this.manageRoomRepository.getRoomAndUpdate({ status_id, room_id });
+  }
+
+  async getRoomByUser(
+    user: Partial<UserModel>,
+    query: object,
+  ): Promise<RoomModel[]> {
+    const rooms = await this.roomRepository.find({
+      where: {
+        userId: user.userId,
+        ...query,
+      },
+    });
+    return rooms;
   }
 }

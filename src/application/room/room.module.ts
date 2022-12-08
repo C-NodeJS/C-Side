@@ -1,3 +1,4 @@
+import { AbilityFactory } from 'src/application/casl/casl-ability.factory';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm/dist/typeorm.module';
 import { RoomModel } from '../../infrastructure/data-access/typeorm/room.entity';
@@ -14,7 +15,7 @@ import { ManageRoomRepository } from './room.repository';
     UserModule,
   ],
   controllers: [RoomController],
-  providers: [ManageRoomServiceImpl],
+  providers: [ManageRoomServiceImpl, AbilityFactory],
   exports: [],
 })
 export class RoomModule {}
