@@ -1,4 +1,3 @@
-
 import { RegisterRequestDTO } from './dto/register.dto';
 import { UserServiceImpl } from './../user/user.service';
 import { UserModel } from './../../infrastructure/data-access/typeorm/user.entity';
@@ -6,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { randomBytes } from 'crypto';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Hash } from '../common/Hash';
+import { LoginRequestDTO } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -83,11 +83,16 @@ export class AuthService {
     return user;
   }
 
-  async login(user: any) {
-    const payload = { email: user.email, sub: user.userId };
+  async login(payload: LoginRequestDTO) {
+    const currUser = await this.validateUser(payload.email, payload.password);
+    const token = {
+      email: currUser.email,
+      sub: currUser.userId,
+      roleId: currUser.role.id,
+    };
 
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(token),
     };
   }
 }

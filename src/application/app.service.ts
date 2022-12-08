@@ -98,8 +98,7 @@ export class AppService {
       usa.name = 'System Admin';
       usa.userName = 'admin';
       usa.email = 'admin@cside.com';
-      usa.password =
-        '$2y$10$OHU7ObPm1yj/szOyCCy0EuiooQVCGqAuuVzZkHHRDzG.8eUhWlwLS';
+      usa.password = 'string';
       usa.role = rsa;
       usa.roleId = rsa.id;
       await this.entityManager.save(usa);
@@ -109,8 +108,7 @@ export class AppService {
       uha.name = 'Host';
       uha.userName = 'host';
       uha.email = 'host@cside.com';
-      uha.password =
-        '$2y$10$OHU7ObPm1yj/szOyCCy0EuiooQVCGqAuuVzZkHHRDzG.8eUhWlwLS';
+      uha.password = 'string';
       uha.role = rha;
       uha.roleId = rha.id;
       await this.entityManager.save(uha);
@@ -119,8 +117,7 @@ export class AppService {
       ucl.name = 'Client';
       ucl.userName = 'client';
       ucl.email = 'client@cside.com';
-      ucl.password =
-        '$2y$10$OHU7ObPm1yj/szOyCCy0EuiooQVCGqAuuVzZkHHRDzG.8eUhWlwLS';
+      ucl.password = 'string';
       ucl.role = rcl;
       ucl.roleId = rcl.id;
       await this.entityManager.save(ucl);
@@ -133,7 +130,7 @@ export class AppService {
       const cbs_reject = new StatusModel();
       cbs_reject.id = 2;
       cbs_reject.statusName = RoomApprovalStatus.REJECT;
-      
+
       await Promise.all([
         this.entityManager.save(cbs_approve),
         this.entityManager.save(cbs_reject),
