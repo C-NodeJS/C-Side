@@ -142,7 +142,7 @@ export class RoomController {
   @ApiOkResponse({ description: 'Success!' })
   async getPendingRooms(
     @Res() response: Response,
-    @Query() { pageSize, pageNumber }: GetRoomQueryDTO,
+    @Query() { pageSize = 20, pageNumber = 1 }: GetRoomQueryDTO,
   ) {
     const httpPresenter = new HttpPresenter(response);
     
