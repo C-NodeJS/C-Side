@@ -6,19 +6,22 @@ import { IUserService } from '../../domain/usecases/user.service';
 
 @Injectable()
 export class UserServiceImpl implements IUserService {
-    constructor(
-        @InjectRepository(UserModel)
-        private userRepository: Repository<UserModel>,
-    ) {}
+  constructor(
+    @InjectRepository(UserModel)
+    private userRepository: Repository<UserModel>,
+  ) {}
 
-    async createUser(user: UserModel): Promise<UserModel> {
-        return await this.userRepository.save(user);
-    }
+  async createUser(user: UserModel): Promise<UserModel> {
+    return await this.userRepository.save(user);
+  }
 
   async findUserByEmail(email: string): Promise<UserModel> {
     return await this.userRepository.findOne({
       where: {
         email,
+      },
+      relations: {
+        role: true,
       },
     });
   }
