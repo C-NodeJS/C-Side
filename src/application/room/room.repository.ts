@@ -1,7 +1,8 @@
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { RoomModel } from '../../infrastructure/data-access/typeorm';
 import { CustomRepository } from 'src/infrastructure/data-access/typeorm-custom/typeorm-ex.decorator';
-import { QueryGetRoomsByLocation, GetRoomsByLocationDTO, RoomDetailResponseDTO } from './dto/manage-room.dto';
+import { QueryGetRoomsByLocation, GetRoomsByLocationDTO } from './dto/manage-room.dto';
+import { RoomStatus } from 'src/infrastructure/data-access/typeorm/enum';
 
 @CustomRepository(RoomModel)
 export class ManageRoomRepository extends Repository<RoomModel> {
@@ -54,4 +55,15 @@ export class ManageRoomRepository extends Repository<RoomModel> {
         return this.findOneAndUpdateByRoomId({ status_id, room_id });
     }
 
+    getManyRooms({ pageNumber, pageSize }) {
+        const { alias } = this;
+        const skip = (pageNumber - 1) * pageSize;
+
+        return this.createBuilder()
+            .select(`${alias}.*`)
+            .where('status = :status', { status: RoomStatus.PENDING })
+            .skip(skip)
+            .limit(pageSize)
+            .getRawMany();
+    }
 }

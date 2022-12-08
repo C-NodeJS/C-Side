@@ -1,6 +1,4 @@
-import { AuthService } from './auth.service';
-import { RegisterRequestDTO } from './dto/register.dto';
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import {
   ApiResponse,
   ApiOkResponse,
@@ -8,7 +6,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { LoginRequestDTO } from './dto/login.dto';
-import { LocalAuthGuard } from './guards/local-auth.guard';
+import { RegisterRequestDTO } from './dto/register.dto';
+import { AuthService } from './auth.service';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -21,7 +20,6 @@ export class AuthController {
     return await this.authService.register(payload);
   }
 
-  @UseGuards(LocalAuthGuard)
   @Post('login')
   @ApiOkResponse({ description: 'Login success' })
   @ApiUnauthorizedResponse({ description: 'Login fail' })
