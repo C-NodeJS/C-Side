@@ -39,10 +39,8 @@ export class ManageRoomServiceImpl {
       roomModel.user = currentUser;
       roomModel.userId = currentUser.userId;
       const roomResponse = await this.roomRepository.save(roomModel);
-      // console.log(roomResponse.);
       return roomResponse;
     } catch (error) {
-      console.log(error);
       throw new BadRequestException('error');
     }
   }
