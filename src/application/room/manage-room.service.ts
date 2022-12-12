@@ -112,7 +112,7 @@ export class ManageRoomServiceImpl {
     if (!room) {
       throw new BadRequestException('Room does not exist!'); // TODO handle later
     }
-    await this.roomRepository.remove(room[0], {});
+    await this.roomRepository.remove(room, {});
     return true; // TODO handle later
   }
 
