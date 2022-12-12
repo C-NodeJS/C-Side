@@ -41,13 +41,22 @@ export class PermissionModel {
   @JoinTable({
     name: 'role_permission',
     joinColumn: {
-      name: 'role_id',
+      name: 'permission_id',
       referencedColumnName: 'id',
     },
     inverseJoinColumn: {
-      name: 'permission_id',
+      name: 'role_id',
       referencedColumnName: 'id',
     },
   })
   roles: RoleModel;
+
+  static parseCondition(condition, user) {
+    if (!condition) return null;
+    const result = {};
+    for (const key in condition) {
+      result[key] = user[condition[key]];
+    }
+    return result;
+  }
 }

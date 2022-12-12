@@ -8,7 +8,7 @@ export class ObjectModel {
 
   @Column({
     type: 'varchar',
-    // unique: true,
+    unique: true,
   })
   name: string;
 

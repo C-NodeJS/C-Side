@@ -68,25 +68,33 @@ export class AppService {
       const permission3 = new PermissionModel();
       permission3.id = 3;
       permission3.roles = rha;
-      permission3.action = PermissionAction.MANAGE;
-      permission3.condition = JSON.stringify({ owner: 'id' });
+      permission3.action = PermissionAction.UPDATE;
+      permission3.condition = JSON.stringify({ userId: 'userId' });
       permission3.objectId = objRoom.id;
       permission3.object = objRoom;
       await this.entityManager.save(permission3);
 
-      // Client can read Room
       const permission4 = new PermissionModel();
       permission4.id = 4;
-      permission4.roles = rcl;
-      permission4.action = PermissionAction.READ;
+      permission4.roles = rha;
+      permission4.action = PermissionAction.CREATE;
       permission4.objectId = objRoom.id;
       permission4.object = objRoom;
       await this.entityManager.save(permission4);
 
+      // Client can read Room
+      const permission5 = new PermissionModel();
+      permission5.id = 5;
+      permission5.roles = rcl;
+      permission5.action = PermissionAction.READ;
+      permission5.objectId = objRoom.id;
+      permission5.object = objRoom;
+      await this.entityManager.save(permission5);
+
       //Save Role Permission
       rsa.permissions = [permission1, permission2];
-      rha.permissions = [permission3];
-      rcl.permissions = [permission4];
+      rha.permissions = [permission3, permission4];
+      rcl.permissions = [permission5];
       await Promise.all([
         this.entityManager.save(rsa),
         this.entityManager.save(rha),

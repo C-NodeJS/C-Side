@@ -23,9 +23,14 @@ import {
 import { Response } from 'express';
 import { ManageRoomServiceImpl } from './manage-room.service';
 import { HttpPresenter } from '../http-presenters';
+import { checkAbility, CHECK_ABILITY } from '../casl/casl-ability.decorator';
+import { PermissionAction } from '../casl/action.constant';
+import { RoomModel } from 'src/infrastructure/data-access/typeorm';
+import { AbilityGuard } from '../auth/guards/ability.guard';
 
 @ApiTags('rooms')
 @ApiBearerAuth()
+@UseGuards(AbilityGuard)
 @UseGuards(JwtAuthGuard)
 @Controller('/rooms')
 export class RoomController {
@@ -65,6 +70,7 @@ export class RoomController {
   }
 
   @Post('/create')
+  @checkAbility({ action: PermissionAction.CREATE, object: new RoomModel() })
   @ApiOkResponse({ description: 'Success!' })
   async createRoom(
     @Body() room: RoomDetailRequestDTO,
@@ -81,16 +87,18 @@ export class RoomController {
   }
 
   @Put('/:room_id')
+  @checkAbility({ action: PermissionAction.UPDATE, object: new RoomModel() })
   @ApiOkResponse({ description: 'Success!' })
   async updateRoom(
     @Res() response: Response,
     @Body() room: RoomDetailRequestDTO,
+    @User() user,
     @Param() { room_id }: RoomIdParamRequestDTO,
   ) {
     const httpPresenter = new HttpPresenter(response);
     try {
       httpPresenter.accept(
-        await this.roomsService.updateRoom(room, { room_id }),
+        await this.roomsService.updateRoom(room, { room_id }, user),
       );
     } catch (e) {
       httpPresenter.reject(e);
@@ -99,16 +107,18 @@ export class RoomController {
   }
 
   @Delete('/:room_id')
+  @checkAbility({ action: PermissionAction.DELETE, object: new RoomModel() })
   @ApiOkResponse({ description: 'Success!' })
   async removeRoom(
+    @User() user,
     @Res() response: Response,
     @Param() room_id: RoomIdParamRequestDTO,
   ) {
     const httpPresenter = new HttpPresenter(response);
     try {
-      httpPresenter.accept(await this.roomsService.removeRoom(room_id));
+      httpPresenter.accept(await this.roomsService.removeRoom(room_id, user));
     } catch (e) {
-      httpPresenter.accept(await this.roomsService.removeRoom(room_id));
+      httpPresenter.reject(e);
     }
     httpPresenter.render();
   }
@@ -121,11 +131,14 @@ export class RoomController {
   ) {
     const httpPresenter = new HttpPresenter(response);
     return httpPresenter
-      .accept(await this.roomsService.getRoomsByLocation({ lng, lat, distance }))
+      .accept(
+        await this.roomsService.getRoomsByLocation({ lng, lat, distance }),
+      )
       .render();
   }
 
   @Put('/change-status/:room_id')
+  @checkAbility({ action: PermissionAction.MANAGE, object: new RoomModel() })
   @ApiOkResponse({ description: 'Success!' })
   async roomApproval(
     @Res() response: Response,
@@ -134,7 +147,9 @@ export class RoomController {
   ) {
     const httpPresenter = new HttpPresenter(response);
     return httpPresenter
-      .accept(await this.roomsService.roomApproval(room_id, { status_id, reason }))
+      .accept(
+        await this.roomsService.roomApproval(room_id, { status_id, reason }),
+      )
       .render();
   }
 
