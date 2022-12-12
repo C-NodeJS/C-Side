@@ -57,7 +57,7 @@ export class ManageRoomServiceImpl {
       roomId: room_id,
     });
 
-    if (oldRoom.length === 0) {
+    if (!oldRoom) {
       throw new BadRequestException('Room does not exist!'); // TODO handle later
     }
 
@@ -111,7 +111,7 @@ export class ManageRoomServiceImpl {
       roomId: room_id,
     });
 
-    if (room.length === 0) {
+    if (!room) {
       throw new BadRequestException('Room does not exist!'); // TODO handle later
     }
     await this.roomRepository.remove(room[0], {});
@@ -151,14 +151,14 @@ export class ManageRoomServiceImpl {
   async getRoomByUser(
     user: Partial<UserModel>,
     query: object,
-  ): Promise<RoomModel[]> {
-    const rooms = await this.roomRepository.find({
+  ): Promise<RoomModel> {
+    const room = await this.roomRepository.findOne({
       where: {
         userId: user.userId,
         ...query,
       },
     });
-    return rooms;
+    return room;
   }
   async getPendingRooms({ pageSize, pageNumber }: GetRoomQueryDTO): Promise<any> {
     try {
