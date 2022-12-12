@@ -61,6 +61,7 @@ export class AuthService {
       name: payload.name || '',
       phone: payload.phone || '',
       address: payload.address || '',
+      roleId: payload.roleId || 3,
     } as any as UserModel;
     const user = await this.userService.createUser(createUserData);
     const accessTokenKey = randomBytes(64).toString('hex');

@@ -29,4 +29,9 @@ export class RegisterRequestDTO {
     required: false,
   })
   address: string;
+
+  @ApiProperty({
+    required: false,
+  })
+  roleId: number;
 }
