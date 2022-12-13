@@ -150,18 +150,24 @@ export class ManageRoomServiceImpl {
     user: Partial<UserModel>,
     query: object,
   ): Promise<RoomModel> {
+    if (user?.role?.name !== 'System Admin') query['userId'] = user.userId;
     const room = await this.roomRepository.findOne({
       where: {
-        userId: user.userId,
         ...query,
       },
     });
     return room;
   }
-  async getPendingRooms({ pageSize, pageNumber }: GetRoomQueryDTO): Promise<any> {
+  async getPendingRooms({
+    pageSize,
+    pageNumber,
+  }: GetRoomQueryDTO): Promise<any> {
     try {
-      const rooms = await this.manageRoomRepository.getManyRooms({ pageNumber, pageSize });
-      
+      const rooms = await this.manageRoomRepository.getManyRooms({
+        pageNumber,
+        pageSize,
+      });
+
       return { rooms, count: rooms.length };
     } catch (e) {
       throw new InternalServerErrorException();

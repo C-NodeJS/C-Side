@@ -24,8 +24,8 @@ export class AbilityFactory {
     const { can, build } = new AbilityBuilder(
       Ability as AbilityClass<AppAbility>,
     );
-    const permissions = await this.userService.findAllPermissionOfUser(user);
-    const currentUser = await this.userService.findUserByEmail(user.email);
+    const { currentUser, permissions } =
+      await this.userService.findAllPermissionOfUser(user);
     if (!permissions)
       throw new HttpException('Error Error', HttpStatus.BAD_REQUEST);
     permissions.forEach((permission) => {
