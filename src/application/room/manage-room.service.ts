@@ -22,6 +22,7 @@ import { ManageRoomRepository } from './room.repository';
 import { RoomDoesNotExists } from 'src/infrastructure/data-access/constants/status.constants';
 import { RoomStatus } from 'src/infrastructure/data-access/typeorm/enum';
 import { UserModel } from 'src/infrastructure/data-access/typeorm';
+import { AdminRoleName } from '../../constants/constant';
 
 @Injectable()
 export class ManageRoomServiceImpl {
@@ -150,7 +151,7 @@ export class ManageRoomServiceImpl {
     user: Partial<UserModel>,
     query: object,
   ): Promise<RoomModel> {
-    if (user?.role?.name !== 'System Admin') query['userId'] = user.userId;
+    if (user?.role?.name !== AdminRoleName) query['userId'] = user.userId;
     const room = await this.roomRepository.findOne({
       where: {
         ...query,
