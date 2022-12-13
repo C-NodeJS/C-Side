@@ -69,7 +69,6 @@ export class AppService {
       permission3.id = 3;
       permission3.roles = rha;
       permission3.action = PermissionAction.UPDATE;
-      permission3.condition = JSON.stringify({ userId: 'userId' });
       permission3.objectId = objRoom.id;
       permission3.object = objRoom;
       await this.entityManager.save(permission3);
