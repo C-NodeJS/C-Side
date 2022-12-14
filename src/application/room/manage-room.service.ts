@@ -37,12 +37,16 @@ export class ManageRoomServiceImpl {
     try {
       const currentUser = await this.userService.findUserByEmail(user.email);
       const roomModel = RoomUtil.getRoomModel(room);
+      await this.manageRoomRepository.checkRoomHaveSameLocation(
+        room.location.lng,
+        room.location.lat,
+      );
       roomModel.user = currentUser;
       roomModel.userId = currentUser.userId;
       const roomResponse = await this.roomRepository.save(roomModel);
       return roomResponse;
     } catch (error) {
-      throw new BadRequestException('error');
+      throw new BadRequestException(error.message);
     }
   }
 
@@ -51,19 +55,27 @@ export class ManageRoomServiceImpl {
     { room_id }: RoomIdParamRequestDTO,
     user: Partial<UserModel>,
   ): Promise<boolean> {
-    const currentUser = await this.userService.findUserByEmail(user.email);
-    const oldRoom = await this.getRoomByUser(currentUser, {
-      roomId: room_id,
-    });
+    try {
+      const currentUser = await this.userService.findUserByEmail(user.email);
+      const oldRoom = await this.getRoomByUser(currentUser, {
+        roomId: room_id,
+      });
 
-    if (!oldRoom) {
-      throw new BadRequestException('Room does not exist!'); // TODO handle later
+      if (!oldRoom) {
+        throw new BadRequestException('Room does not exist!'); // TODO handle later
+      }
+      if (room.location.lat && room.location.lng)
+        await this.manageRoomRepository.checkRoomHaveSameLocation(
+          room.location.lng,
+          room.location.lat,
+        );
+      const roomModel = RoomUtil.getRoomModel(room);
+      roomModel.roomId = room_id;
+      await this.roomRepository.update({ roomId: room_id }, { ...roomModel });
+      return true;
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
-
-    const roomModel = RoomUtil.getRoomModel(room);
-    roomModel.roomId = room_id;
-    await this.roomRepository.update({ roomId: room_id }, { ...roomModel });
-    return true;
   }
 
   async getAllRoom(
@@ -173,5 +185,14 @@ export class ManageRoomServiceImpl {
     } catch (e) {
       throw new InternalServerErrorException();
     }
+  }
+
+  async getRoomWithLocation(lat, lng): Promise<RoomModel> {
+    const room = await this.roomRepository.findOne({
+      where: {
+        location: '(12, 12)',
+      },
+    });
+    return room;
   }
 }
