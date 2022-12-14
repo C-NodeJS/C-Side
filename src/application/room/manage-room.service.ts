@@ -191,7 +191,7 @@ export class ManageRoomServiceImpl {
     const ws = wb.Sheets[wsname];
     const data = XLSX.utils.sheet_to_json(ws);
 
-    const rooms = await this.manageRoomRepository.getAllLocaltionOfRooms();
+    const rooms = await this.manageRoomRepository.getAllLocationOfRooms();
     const cloneRooms = rooms.reduce((init, currentValue) => {
       init[JSON.stringify(currentValue.location)] = currentValue;
       return init;
@@ -200,7 +200,8 @@ export class ManageRoomServiceImpl {
     const arrSatisfyCondition = [];
     data.forEach(item => {
       const location = convertStringToObject(item['location']);
-
+      console.log(location);
+      
       if (
         !cloneRooms[JSON.stringify(location)]
         && Object.values(RoomStatus).includes(item['status'])

@@ -67,7 +67,7 @@ export class ManageRoomRepository extends Repository<RoomModel> {
             .getRawMany();
     }
 
-    getAllLocaltionOfRooms() {
+    getAllLocationOfRooms() {
         const { alias } = this;
 
         return this.createBuilder()
