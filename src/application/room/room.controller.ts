@@ -7,7 +7,7 @@ import {
   QueryGetRoomsByLocation,
   RoomApprovalDTO,
 } from './dto/manage-room.dto';
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   Body,
   Controller,
@@ -18,15 +18,18 @@ import {
   Put,
   Query,
   Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ManageRoomServiceImpl } from './manage-room.service';
 import { HttpPresenter } from '../http-presenters';
-import { checkAbility, CHECK_ABILITY } from '../casl/casl-ability.decorator';
+import { checkAbility } from '../casl/casl-ability.decorator';
 import { PermissionAction } from '../casl/action.constant';
 import { RoomModel } from 'src/infrastructure/data-access/typeorm';
 import { AbilityGuard } from '../auth/guards/ability.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('rooms')
 @ApiBearerAuth()
@@ -160,9 +163,40 @@ export class RoomController {
     @Query() { pageSize = 20, pageNumber = 1 }: GetRoomQueryDTO,
   ) {
     const httpPresenter = new HttpPresenter(response);
-    
+
     return httpPresenter
       .accept(await this.roomsService.getPendingRooms({ pageSize, pageNumber }))
+      .render();
+  }
+
+  @Post('/import-rooms')
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({
+    summary: '',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiOkResponse({ description: 'Success!' })
+  async importRoomsWithExcel(
+    @Res() response: Response,
+    @User() user,
+    @UploadedFile('file') file
+  ) {
+    const httpPresenter = new HttpPresenter(response);
+    const { buffer } = file;
+
+    return httpPresenter
+      .accept(await this.roomsService.importRoomsWithExcel(buffer, user))
       .render();
   }
 }

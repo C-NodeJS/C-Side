@@ -17,6 +17,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+import * as XLSX from 'xlsx';
 import { RoomUtil } from './room.util';
 import { ManageRoomRepository } from './room.repository';
 import { RoomDoesNotExists } from 'src/infrastructure/data-access/constants/status.constants';
@@ -158,13 +159,73 @@ export class ManageRoomServiceImpl {
     });
     return room;
   }
+
   async getPendingRooms({ pageSize, pageNumber }: GetRoomQueryDTO): Promise<any> {
     try {
       const rooms = await this.manageRoomRepository.getManyRooms({ pageNumber, pageSize });
-      
+
       return { rooms, count: rooms.length };
     } catch (e) {
       throw new InternalServerErrorException();
     }
   }
+
+  async importRoomsWithExcel(
+    buffer: Buffer,
+    user: Partial<UserModel>
+  ): Promise<Boolean> {
+    const currentUser = await this.userService.findUserByEmail(user.email);
+
+    if (!currentUser) {
+      throw new BadRequestException('Somethings wrong happened!'); // TODO handle later
+    }
+
+    let wb = await XLSX.read(buffer, { type: 'buffer' });
+    const wsname = wb.SheetNames[0];
+    const ws = wb.Sheets[wsname];
+    const data = XLSX.utils.sheet_to_json(ws);
+
+    const rooms = await this.manageRoomRepository.getAllLocaltionOfRooms();
+    const cloneRooms = rooms.reduce((init, currentValue) => {
+      init[JSON.stringify(currentValue.location)] = currentValue;
+      return init;
+    }, {});
+
+    const arrSatisfyCondition = [];
+    data.forEach(item => {
+      const location = convertStringToObject(item['location']);
+
+      if (
+        !cloneRooms[JSON.stringify(location)]
+        && Object.values(RoomStatus).includes(item['status'])
+        && typeof item['is_active'] === 'boolean'
+        && item['capacity'] > 0
+      ) {
+        item['location'] = {
+          lng: location['y'],
+          lat: location['x'],
+        };
+        item = RoomUtil.getRoomModel(item)
+        item['userId'] = currentUser.userId;
+        arrSatisfyCondition.push(item);;
+      }
+    });
+
+    this.roomRepository.save(arrSatisfyCondition);
+    return true;
+  }
+}
+
+function convertStringToObject(string: string) {
+  return string
+    .split(',')
+    .map(keyVal => {
+      return keyVal
+        .split(':')
+        .map(_ => _.trim())
+    })
+    .reduce((accumulator, currentValue) => {
+      accumulator[currentValue[0]] = Number(currentValue[1])
+      return accumulator
+    }, {})
 }

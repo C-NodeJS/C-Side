@@ -66,4 +66,12 @@ export class ManageRoomRepository extends Repository<RoomModel> {
             .limit(pageSize)
             .getRawMany();
     }
+
+    getAllLocaltionOfRooms() {
+        const { alias } = this;
+
+        return this.createBuilder()
+            .select(`${alias}.location as location`)
+            .getRawMany();
+    }
 }
