@@ -7,7 +7,7 @@ import {
 } from '@casl/ability';
 import { UserModel } from 'src/infrastructure/data-access/typeorm/user.entity';
 import { RoomModel } from 'src/infrastructure/data-access/typeorm/room.entity';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserServiceImpl } from '../user/user.service';
 import { PermissionAction } from './action.constant';
 import { PermissionModel } from 'src/infrastructure/data-access/typeorm';
@@ -24,8 +24,10 @@ export class AbilityFactory {
     const { can, build } = new AbilityBuilder(
       Ability as AbilityClass<AppAbility>,
     );
-    const permissions = await this.userService.findAllPermissionOfUser(user);
-    const currentUser = await this.userService.findUserByEmail(user.email);
+    const { currentUser, permissions } =
+      await this.userService.findAllPermissionOfUser(user);
+    if (!permissions)
+      throw new HttpException('Error Error', HttpStatus.BAD_REQUEST);
     permissions.forEach((permission) => {
       let type;
       if (permission.object.name === 'UserModel') type = UserModel;

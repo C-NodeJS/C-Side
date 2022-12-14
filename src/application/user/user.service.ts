@@ -34,6 +34,10 @@ export class UserServiceImpl implements IUserService {
         },
       },
     });
-    return data?.role?.permissions ?? null;
+    const permissions = data?.role?.permissions;
+    return {
+      currentUser: data,
+      permissions,
+    };
   }
 }
