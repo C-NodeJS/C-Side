@@ -38,33 +38,44 @@ export class ManageRoomServiceImpl {
     try {
       const currentUser = await this.userService.findUserByEmail(user.email);
       const roomModel = RoomUtil.getRoomModel(room);
+      await this.manageRoomRepository.checkRoomHaveSameLocation(
+        room.location.lng,
+        room.location.lat,
+      );
       roomModel.user = currentUser;
       roomModel.userId = currentUser.userId;
       const roomResponse = await this.roomRepository.save(roomModel);
       return roomResponse;
     } catch (error) {
-      throw new BadRequestException('error');
+      throw new BadRequestException(error.message);
     }
   }
 
   async updateRoom(
     room: RoomDetailRequestDTO,
     { room_id }: RoomIdParamRequestDTO,
-    user: Partial<UserModel>,
+    user: any,
   ): Promise<boolean> {
-    const currentUser = await this.userService.findUserByEmail(user.email);
-    const oldRoom = await this.getRoomByUser(currentUser, {
-      roomId: room_id,
-    });
+    try {
+      const oldRoom = await this.getRoomByUser(user, {
+        roomId: room_id,
+      });
 
-    if (!oldRoom) {
-      throw new BadRequestException('Room does not exist!'); // TODO handle later
+      if (!oldRoom) {
+        throw new BadRequestException('Room does not exist!'); // TODO handle later
+      }
+      await this.manageRoomRepository.checkRoomHaveSameLocation(
+        room.location.lng,
+        room.location.lat,
+        room_id,
+      );
+      const roomModel = RoomUtil.getRoomModel(room);
+      roomModel.roomId = room_id;
+      await this.roomRepository.update({ roomId: room_id }, { ...roomModel });
+      return true;
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
-
-    const roomModel = RoomUtil.getRoomModel(room);
-    roomModel.roomId = room_id;
-    await this.roomRepository.update({ roomId: room_id }, { ...roomModel });
-    return true;
   }
 
   async getAllRoom(
@@ -104,10 +115,9 @@ export class ManageRoomServiceImpl {
 
   async removeRoom(
     { room_id }: RoomIdParamRequestDTO,
-    user: Partial<UserModel>,
+    user: any,
   ): Promise<boolean> {
-    const currentUser = await this.userService.findUserByEmail(user.email);
-    const room = await this.getRoomByUser(currentUser, {
+    const room = await this.getRoomByUser(user, {
       roomId: room_id,
     });
 
@@ -148,11 +158,8 @@ export class ManageRoomServiceImpl {
     return this.manageRoomRepository.getRoomAndUpdate({ status_id, room_id });
   }
 
-  async getRoomByUser(
-    user: Partial<UserModel>,
-    query: object,
-  ): Promise<RoomModel> {
-    if (user?.role?.name !== AdminRoleName) query['userId'] = user.userId;
+  async getRoomByUser(user: any, query: object): Promise<RoomModel> {
+    if (user?.role?.name !== AdminRoleName) query['userId'] = user.sub;
     const room = await this.roomRepository.findOne({
       where: {
         ...query,
@@ -192,7 +199,7 @@ export class ManageRoomServiceImpl {
     }, {});
 
     const arrSatisfyCondition = [];
-    data.forEach(item => {
+    data.forEach((item) => {
       const location = convertStringToObject(item['location']);
 
       if (
@@ -221,13 +228,11 @@ export class ManageRoomServiceImpl {
 function convertStringToObject(string: string) {
   return string
     .split(',')
-    .map(keyVal => {
-      return keyVal
-        .split(':')
-        .map(_ => _.trim())
+    .map((keyVal) => {
+      return keyVal.split(':').map((_) => _.trim());
     })
     .reduce((accumulator, currentValue) => {
-      accumulator[currentValue[0]] = Number(currentValue[1])
-      return accumulator
-    }, {})
+      accumulator[currentValue[0]] = Number(currentValue[1]);
+      return accumulator;
+    }, {});
 }

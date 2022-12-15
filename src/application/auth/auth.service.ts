@@ -69,7 +69,7 @@ export class AuthService {
     return accessToken;
   }
 
-  async validateUser(email: string, password: string): Promise<any> {
+  async validateUser(email: string, password: string): Promise<UserModel> {
     const user = await this.userService.findUserByEmail(email);
 
     if (!user) {
@@ -90,6 +90,7 @@ export class AuthService {
       email: currUser.email,
       sub: currUser.userId,
       roleId: currUser.role.id,
+      roleName: currUser.role.name,
     };
 
     return {
