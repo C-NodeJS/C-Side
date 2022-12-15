@@ -32,7 +32,7 @@ export class ManageRoomServiceImpl {
     private readonly userService: UserServiceImpl,
     @InjectRepository(RoomModel)
     private roomRepository: Repository<RoomModel>,
-  ) {}
+  ) { }
 
   async createRoom(room: RoomDetailRequestDTO, user) {
     try {
@@ -178,7 +178,7 @@ export class ManageRoomServiceImpl {
 
   async importRoomsWithExcel(
     buffer: Buffer,
-    user: Partial<UserModel>
+    userId: Number,
   ): Promise<Boolean> {
     let wb = await XLSX.read(buffer, { type: 'buffer' });
     const wsname = wb.SheetNames[0];
@@ -194,11 +194,13 @@ export class ManageRoomServiceImpl {
     const arrSatisfyCondition = [];
     data.forEach(item => {
       const location = convertStringToObject(item['location']);
-      
+
       if (
         !cloneRooms[JSON.stringify(location)]
         && Object.values(RoomStatus).includes(item['status'])
         && typeof item['is_active'] === 'boolean'
+        && Number.isNaN(location['x'])
+        && Number.isNaN(location['y'])
         && item['capacity'] > 0
       ) {
         item['location'] = {
@@ -206,7 +208,7 @@ export class ManageRoomServiceImpl {
           lat: location['x'],
         };
         item = RoomUtil.getRoomModel(item)
-        item['userId'] = user.userId;
+        item['userId'] = userId;
         arrSatisfyCondition.push(item);;
       }
     });
