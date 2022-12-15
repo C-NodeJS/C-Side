@@ -199,8 +199,8 @@ export class ManageRoomServiceImpl {
         !cloneRooms[JSON.stringify(location)]
         && Object.values(RoomStatus).includes(item['status'])
         && typeof item['is_active'] === 'boolean'
-        && String(location['x']) !== 'NaN'
-        && String(location['y']) !== 'NaN'
+        && Number.isNaN(location['x'])
+        && Number.isNaN(location['y'])
         && item['capacity'] > 0
       ) {
         item['location'] = {
