@@ -180,12 +180,6 @@ export class ManageRoomServiceImpl {
     buffer: Buffer,
     user: Partial<UserModel>
   ): Promise<Boolean> {
-    const currentUser = await this.userService.findUserByEmail(user.email);
-
-    if (!currentUser) {
-      throw new BadRequestException('Somethings wrong happened!'); // TODO handle later
-    }
-
     let wb = await XLSX.read(buffer, { type: 'buffer' });
     const wsname = wb.SheetNames[0];
     const ws = wb.Sheets[wsname];
@@ -212,7 +206,7 @@ export class ManageRoomServiceImpl {
           lat: location['x'],
         };
         item = RoomUtil.getRoomModel(item)
-        item['userId'] = currentUser.userId;
+        item['userId'] = user.userId;
         arrSatisfyCondition.push(item);;
       }
     });
