@@ -20,7 +20,7 @@ export class ManageRoomRepository extends Repository<RoomModel> {
       .select('*')
       .where(
         `location[0] = ${lat} AND location[1] = ${lng} ${
-          room_id ? 'AND room_id =' + room_id : ''
+          room_id ? 'AND room_id !=' + room_id : ''
         }`,
       )
       .getRawOne()
