@@ -178,7 +178,7 @@ export class ManageRoomServiceImpl {
 
   async importRoomsWithExcel(
     buffer: Buffer,
-    user: Partial<UserModel>
+    userId: Number,
   ): Promise<Boolean> {
     let wb = await XLSX.read(buffer, { type: 'buffer' });
     const wsname = wb.SheetNames[0];
@@ -199,14 +199,16 @@ export class ManageRoomServiceImpl {
         !cloneRooms[JSON.stringify(location)]
         && Object.values(RoomStatus).includes(item['status'])
         && typeof item['is_active'] === 'boolean'
+        && String(location['x']) !== 'NaN'
+        && String(location['y']) !== 'NaN'
         && item['capacity'] > 0
-      ) {
+        ) {
         item['location'] = {
           lng: location['y'],
           lat: location['x'],
         };
         item = RoomUtil.getRoomModel(item)
-        item['userId'] = user.userId;
+        item['userId'] = userId;
         arrSatisfyCondition.push(item);;
       }
     });
