@@ -22,7 +22,8 @@ export class ManageRoomRepository extends Repository<RoomModel> {
       .limit(1)
       .execute()
       .then((res) => {
-        if (res.length > 0) throw new Error(`${res[0].name} has the same location`);
+        if (res.length > 0)
+          throw new Error(`${res[0].name} has the same location`);
       });
   }
 
@@ -83,6 +84,14 @@ export class ManageRoomRepository extends Repository<RoomModel> {
       .where('status = :status', { status: RoomStatus.PENDING })
       .skip(skip)
       .limit(pageSize)
+      .getRawMany();
+  }
+
+  getAllLocationOfRooms() {
+    const { alias } = this;
+
+    return this.createBuilder()
+      .select(`${alias}.location as location`)
       .getRawMany();
   }
 }
