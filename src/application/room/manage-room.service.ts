@@ -200,7 +200,6 @@ export class ManageRoomServiceImpl {
     const arrSatisfyCondition = [];
     data.forEach(item => {
       const location = convertStringToObject(item['location']);
-      console.log(location);
       
       if (
         !cloneRooms[JSON.stringify(location)]
