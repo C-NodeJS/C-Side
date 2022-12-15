@@ -196,7 +196,7 @@ export class RoomController {
     const { buffer } = file;
 
     return httpPresenter
-      .accept(await this.roomsService.importRoomsWithExcel(buffer, user))
+      .accept(await this.roomsService.importRoomsWithExcel(buffer, user.sub))
       .render();
   }
 }
