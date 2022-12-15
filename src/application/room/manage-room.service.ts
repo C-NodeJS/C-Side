@@ -32,7 +32,7 @@ export class ManageRoomServiceImpl {
     private readonly userService: UserServiceImpl,
     @InjectRepository(RoomModel)
     private roomRepository: Repository<RoomModel>,
-  ) {}
+  ) { }
 
   async createRoom(room: RoomDetailRequestDTO, user) {
     try {
@@ -194,7 +194,7 @@ export class ManageRoomServiceImpl {
     const arrSatisfyCondition = [];
     data.forEach(item => {
       const location = convertStringToObject(item['location']);
-      
+
       if (
         !cloneRooms[JSON.stringify(location)]
         && Object.values(RoomStatus).includes(item['status'])
@@ -202,7 +202,7 @@ export class ManageRoomServiceImpl {
         && String(location['x']) !== 'NaN'
         && String(location['y']) !== 'NaN'
         && item['capacity'] > 0
-        ) {
+      ) {
         item['location'] = {
           lng: location['y'],
           lat: location['x'],
