@@ -64,11 +64,11 @@ export class ManageRoomServiceImpl {
       if (!oldRoom) {
         throw new BadRequestException('Room does not exist!'); // TODO handle later
       }
-      if (room.location.lat && room.location.lng)
-        await this.manageRoomRepository.checkRoomHaveSameLocation(
-          room.location.lng,
-          room.location.lat,
-        );
+      await this.manageRoomRepository.checkRoomHaveSameLocation(
+        room.location.lng,
+        room.location.lat,
+        room_id,
+      );
       const roomModel = RoomUtil.getRoomModel(room);
       roomModel.roomId = room_id;
       await this.roomRepository.update({ roomId: room_id }, { ...roomModel });

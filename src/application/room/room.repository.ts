@@ -15,15 +15,17 @@ export class ManageRoomRepository extends Repository<RoomModel> {
     return this.createQueryBuilder(`${this.alias}`);
   }
 
-  checkRoomHaveSameLocation(lng, lat) {
+  checkRoomHaveSameLocation(lng, lat, room_id = null) {
     return this.createBuilder()
       .select('*')
-      .where(`location[0] = ${lat} AND location[1] = ${lng}`)
-      .limit(1)
-      .execute()
+      .where(
+        `location[0] = ${lat} AND location[1] = ${lng} ${
+          room_id ? 'AND room_id =' + room_id : ''
+        }`,
+      )
+      .getRawOne()
       .then((res) => {
-        if (res.length > 0)
-          throw new Error(`${res[0].name} has the same location`);
+        if (res) throw new Error(`${res.name} has the same location`);
       });
   }
 
