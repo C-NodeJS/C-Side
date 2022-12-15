@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AppModule } from './application/app.module';
+import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { AppModule } from './application/app.module';
 
 declare const module: any;
 
@@ -31,6 +31,7 @@ async function bootstrap() {
     .setTitle('CSide API')
     .setDescription('Booking service')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
