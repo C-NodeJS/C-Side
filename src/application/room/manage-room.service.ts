@@ -32,7 +32,7 @@ export class ManageRoomServiceImpl {
     private readonly userService: UserServiceImpl,
     @InjectRepository(RoomModel)
     private roomRepository: Repository<RoomModel>,
-  ) { }
+  ) {}
 
   async createRoom(room: RoomDetailRequestDTO, user) {
     try {
@@ -86,9 +86,9 @@ export class ManageRoomServiceImpl {
     if (!currentUser) {
       throw new BadRequestException('Somethings wrong happened!'); // TODO handle later
     }
-    const skip = (pageNumber || 1 - 1) * pageSize;
+    const skip = (pageNumber - 1) * pageSize;
     const [data, total] = await this.roomRepository.findAndCount({
-      where: { user: { userId: currentUser.userId } },
+      where: { userId: currentUser.userId },
       take: pageSize,
       skip,
     });
@@ -183,10 +183,7 @@ export class ManageRoomServiceImpl {
     }
   }
 
-  async importRoomsWithExcel(
-    buffer: Buffer,
-    userId: Number,
-  ): Promise<Boolean> {
+  async importRoomsWithExcel(buffer: Buffer, userId: Number): Promise<Boolean> {
     let wb = await XLSX.read(buffer, { type: 'buffer' });
     const wsname = wb.SheetNames[0];
     const ws = wb.Sheets[wsname];
@@ -203,20 +200,20 @@ export class ManageRoomServiceImpl {
       const location = convertStringToObject(item['location']);
 
       if (
-        !cloneRooms[JSON.stringify(location)]
-        && Object.values(RoomStatus).includes(item['status'])
-        && typeof item['is_active'] === 'boolean'
-        && Number.isNaN(location['x'])
-        && Number.isNaN(location['y'])
-        && item['capacity'] > 0
+        !cloneRooms[JSON.stringify(location)] &&
+        Object.values(RoomStatus).includes(item['status']) &&
+        typeof item['is_active'] === 'boolean' &&
+        Number.isNaN(location['x']) &&
+        Number.isNaN(location['y']) &&
+        item['capacity'] > 0
       ) {
         item['location'] = {
           lng: location['y'],
           lat: location['x'],
         };
-        item = RoomUtil.getRoomModel(item)
+        item = RoomUtil.getRoomModel(item);
         item['userId'] = userId;
-        arrSatisfyCondition.push(item);;
+        arrSatisfyCondition.push(item);
       }
     });
 
