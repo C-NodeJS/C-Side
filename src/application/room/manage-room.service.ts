@@ -79,17 +79,17 @@ export class ManageRoomServiceImpl {
   }
 
   async getAllRoom(
-    { pageSize, pageNumber }: GetRoomQueryDTO,
+    { pageSize = 20, pageNumber = 1 }: GetRoomQueryDTO,
     user,
   ): Promise<RoomsResponseDTO> {
     const currentUser = await this.userService.findUserByEmail(user.email);
     if (!currentUser) {
       throw new BadRequestException('Somethings wrong happened!'); // TODO handle later
     }
-    const skip = ((pageNumber || 1) - 1) * (pageSize || 20);
+    const skip = (pageNumber - 1) * pageSize;
     const [data, total] = await this.roomRepository.findAndCount({
-      where: { user: { userId: currentUser.userId } },
-      take: pageSize || 20,
+      where: { userId: currentUser.userId },
+      take: pageSize,
       skip,
     });
 
